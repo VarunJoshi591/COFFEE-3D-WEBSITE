@@ -1,33 +1,71 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+  --coffee-espresso: #1A0F0A;
+  --coffee-primary: #2D1810;
+  --coffee-secondary: #3D2820;
+  --coffee-border: #5A4034;
+  --coffee-text-primary: #F5E6D3;
+  --coffee-text-secondary: #C9B8A0;
+  --coffee-accent: #4F9C8F;
+  --coffee-gold: #FFD700;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  color: var(--coffee-text-primary);
+  background-color: var(--coffee-espresso);
+  font-family: var(--font-inter), sans-serif;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  scroll-behavior: smooth;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+/* Custom Premium Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--coffee-espresso);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--coffee-border);
+  border-radius: 6px;
+  border: 2px solid var(--coffee-espresso);
+  transition: all 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--coffee-accent);
+}
+
+/* Selection Highlight Color */
+::selection {
+  background-color: var(--coffee-accent);
+  color: var(--coffee-text-primary);
+}
+
+/* Smooth custom transitions */
+.smooth-transition {
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Custom premium hover text-glow */
+.hover-text-glow:hover {
+  text-shadow: 0 0 10px rgba(245, 230, 211, 0.5);
+}
+
+/* Premium Card glow effect */
+.coffee-card-glow {
+  box-shadow: 0 10px 30px -15px rgba(0, 0, 0, 0.7);
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.coffee-card-glow:hover {
+  box-shadow: 0 20px 40px -10px rgba(79, 156, 143, 0.25);
+  border-color: var(--coffee-accent);
 }
