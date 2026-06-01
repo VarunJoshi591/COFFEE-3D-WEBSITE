@@ -86,3 +86,33 @@ export const HIGHLIGHT_FEATURES = [
     description: "We pay 35% above Fair Trade prices directly to farmers, ensuring sustainability."
   }
 ];
+
+export interface FeatureItem {
+  title: string;
+  description: string;
+  position: 'left' | 'right';
+}
+
+export const features: FeatureItem[] = [
+  {
+    title: "Organic & Shade Grown",
+    description: "Cultivated beneath native canopy trees, preserving biodiversity and nurturing deep, complex flavor profiles.",
+    position: "left"
+  },
+  {
+    title: "SCA Grade 85+",
+    description: "Every batch is certified to score 85+ on the Specialty Coffee Association scale for exceptional quality.",
+    position: "left"
+  },
+  {
+    title: "Precision Roasting",
+    description: "Small-batch convection roast profiles digitally monitored to lock in origin characteristics.",
+    position: "right"
+  },
+  {
+    title: "Direct Trade Ethics",
+    description: "We pay up to 35% above fair-trade standard prices directly to our farming partners globally.",
+    position: "right"
+  }
+];
+
