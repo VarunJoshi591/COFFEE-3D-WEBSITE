@@ -1,112 +1,57 @@
-"use client";
-
-import React from "react";
-import { Coffee, ArrowRight } from "lucide-react";
+'use client';
+import { motion } from 'framer-motion';
 
 export default function FinalCTA() {
   return (
-    <footer className="bg-[#0A0503] border-t border-coffee-border/20 py-16 px-6 md:px-12 lg:px-24 text-coffee-textSecondary text-xs">
-      <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between gap-12 items-start">
-        <div className="space-y-4 max-w-xs">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-coffee-accent/20 flex items-center justify-center">
-              <Coffee className="w-4 h-4 text-coffee-accent" />
-            </div>
-            <span className="text-lg font-bold font-playfair tracking-widest text-coffee-textPrimary">
-              L&apos;AROMA
-            </span>
-          </div>
-          <p className="leading-relaxed">
-            Crafting premium micro-batch roast expressions since 2026. Empowering specialty farms
-            globally.
-          </p>
-        </div>
-
-        {/* Links 1 */}
-        <div className="space-y-3">
-          <h4 className="font-bold tracking-widest text-coffee-textPrimary uppercase">
-            Experience
-          </h4>
-          <ul className="space-y-2">
-            <li>
-              <a href="#hero" className="hover:text-coffee-accent transition-colors duration-300">
-                Sticky Canvas
-              </a>
-            </li>
-            <li>
-              <a href="#blends" className="hover:text-coffee-accent transition-colors duration-300">
-                Reserve Line
-              </a>
-            </li>
-            <li>
-              <a href="#brewing" className="hover:text-coffee-accent transition-colors duration-300">
-                Extraction parameters
-              </a>
-            </li>
-          </ul>
-        </div>
-
-        {/* Links 2 */}
-        <div className="space-y-3">
-          <h4 className="font-bold tracking-widest text-coffee-textPrimary uppercase">
-            Craftsmanship
-          </h4>
-          <ul className="space-y-2">
-            <li>
-              <a href="#sourcing" className="hover:text-coffee-accent transition-colors duration-300">
-                Direct Trade
-              </a>
-            </li>
-            <li>
-              <a href="#sourcing" className="hover:text-coffee-accent transition-colors duration-300">
-                SCA Guidelines
-              </a>
-            </li>
-            <li>
-              <a href="#brewing" className="hover:text-coffee-accent transition-colors duration-300">
-                Roast Levels
-              </a>
-            </li>
-          </ul>
-        </div>
-
-        {/* Newsletter Form */}
-        <div className="space-y-3 w-full md:w-auto">
-          <h4 className="font-bold tracking-widest text-coffee-textPrimary uppercase">
-            Micro-Lot Bulletins
-          </h4>
-          <p className="mb-2">
-            Subscribe to receive exclusive notifications on highly limited micro-batch releases.
-          </p>
-          <div className="flex gap-2">
-            <input
-              type="email"
-              placeholder="Email Address"
-              className="bg-coffee-espresso border border-coffee-border/40 px-4 py-2.5 rounded-full text-coffee-textPrimary placeholder:text-coffee-textSecondary/50 focus:outline-none focus:border-coffee-accent text-xs w-full max-w-[200px]"
-            />
-            <button
-              className="bg-coffee-accent text-coffee-espresso font-bold p-2.5 rounded-full hover:bg-white transition-colors duration-300"
-              aria-label="Subscribe to newsletter"
-            >
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
+    <section className="py-32 px-4 relative overflow-hidden">
+      {/* Animated Background */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#1A0F0A] to-[#2D1810]" />
+      <motion.div
+        animate={{
+          scale: [1, 1.2, 1],
+          opacity: [0.3, 0.5, 0.3]
+        }}
+        transition={{ repeat: Infinity, duration: 8 }}
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[#4F9C8F]/20 rounded-full blur-3xl"
+      />
+      <div className="max-w-4xl mx-auto text-center relative z-10">
+        <motion.h2
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-5xl md:text-7xl font-['Playfair_Display'] font-bold text-[#F5E6D3] mb-6"
+        >
+          Find the Perfect Coffee for You
+        </motion.h2>
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.2 }}
+          className="text-lg md:text-xl text-[#C9B8A0] mb-12 font-['Inter']"
+        >
+          Experience the art of coffee craftsmanship
+        </motion.p>
+        <motion.button
+          initial={{ opacity: 0, scale: 0.8 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.4 }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="px-16 py-5 bg-gradient-to-r from-[#4F9C8F] to-[#3D8B7F] text-white rounded-full text-xl font-semibold font-['Inter'] shadow-2xl hover:shadow-[#4F9C8F]/40 transition-shadow"
+        >
+          Explore Full Menu
+        </motion.button>
+        {/* Decorative Sparkle */}
+        <motion.div
+          animate={{ rotate: 360, scale: [1, 1.2, 1] }}
+          transition={{ repeat: Infinity, duration: 4 }}
+          className="mt-12 text-[#D4A574] text-4xl"
+        >
+          ✦
+        </motion.div>
       </div>
-
-      <div className="max-w-6xl mx-auto border-t border-coffee-border/10 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-coffee-textSecondary/60">
-        <span>
-          &copy; {new Date().getFullYear()} L&apos;Aroma Specialty Coffee. All rights reserved.
-        </span>
-        <div className="flex gap-6">
-          <a href="#" className="hover:text-coffee-accent transition-colors duration-300">
-            Terms of Service
-          </a>
-          <a href="#" className="hover:text-coffee-accent transition-colors duration-300">
-            Privacy Policy
-          </a>
-        </div>
-      </div>
-    </footer>
+    </section>
   );
 }
