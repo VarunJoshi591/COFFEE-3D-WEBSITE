@@ -1,123 +1,65 @@
 export interface CoffeeProduct {
-  id: string;
-  name: string;
-  tagline: string;
-  description: string;
-  price: number;
-  rating: number;
-  reviewsCount: number;
-  roastLevel: 'Light' | 'Medium' | 'Dark';
-  notes: string[];
-  tag: string;
-  origin: string;
-  elevation: string;
-  image: string;
+id: string;
+name: string;
+description: string;
+price: string;
+rating: number;
+image: string;
+features: string[];
 }
-
-export const COFFEE_PRODUCTS: CoffeeProduct[] = [
-  {
-    id: 'ethiopian-yirgacheffe',
-    name: 'Ethiopian Yirgacheffe',
-    tagline: 'Elegance in a Cup',
-    description: 'A delicate medium-light roast with sparkling notes of sweet jasmine, bright citrus, and honeyed tea texture.',
-    price: 19.50,
-    rating: 4.9,
-    reviewsCount: 184,
-    roastLevel: 'Light',
-    notes: ['Jasmine', 'Lemon Zest', 'Orange Blossom'],
-    tag: 'Single Origin',
-    origin: 'Yirgacheffe, Ethiopia',
-    elevation: '1,900m - 2,200m',
-    image: '/coffee/yirgacheffe.jpg',
-  },
-  {
-    id: 'sumatran-mandheling',
-    name: 'Sumatra Mandheling',
-    tagline: 'Deep, Dark & Mysterious',
-    description: 'An extremely low-acid, heavy-bodied dark roast displaying complex layers of cedar, rich dark chocolate, and spicy finish.',
-    price: 18.00,
-    rating: 4.8,
-    reviewsCount: 142,
-    roastLevel: 'Dark',
-    notes: ['Dark Chocolate', 'Cedar Wood', 'Brown Sugar'],
-    tag: 'Best Seller',
-    origin: 'Sumatra, Indonesia',
-    elevation: '1,100m - 1,500m',
-    image: '/coffee/mandheling.jpg',
-  },
-  {
-    id: 'guatemalan-antigua',
-    name: 'Guatemalan Antigua',
-    tagline: 'Perfect Harmony',
-    description: 'A premium medium roast perfectly balanced with rich smoky cocoa undertones, subtle spice notes, and a clean caramel finish.',
-    price: 21.00,
-    rating: 4.9,
-    reviewsCount: 98,
-    roastLevel: 'Medium',
-    notes: ['Cocoa', 'Caramel', 'Smoky Spice'],
-    tag: 'Limited Batch',
-    origin: 'Antigua Valley, Guatemala',
-    elevation: '1,500m - 1,800m',
-    image: '/coffee/antigua.jpg',
-  },
-  {
-    id: 'espresso-signature',
-    name: 'Espresso Signature',
-    tagline: 'Rich Velvet Espresso',
-    description: 'Our award-winning blend designed specifically for rich velvet espresso. Delivers an intense body, thick golden crema, and dark cocoa finish.',
-    price: 16.50,
-    rating: 5.0,
-    reviewsCount: 312,
-    roastLevel: 'Dark',
-    notes: ['Toasted Almond', 'Treacle', 'Molasses'],
-    tag: 'Signature Blend',
-    origin: 'Brazil & Colombia Blend',
-    elevation: '1,200m - 1,600m',
-    image: '/coffee/espresso.jpg',
-  }
-];
-
-export const HIGHLIGHT_FEATURES = [
-  {
-    title: "100% Arabica Specialty Grade",
-    description: "Sourced exclusively from farms with SCA cupping ratings above 85 points."
-  },
-  {
-    title: "Fresh Micro-Batch Roasting",
-    description: "Roasted in small batches daily and shipped within 24 hours of roasting."
-  },
-  {
-    title: "Direct Trade Partnership",
-    description: "We pay 35% above Fair Trade prices directly to farmers, ensuring sustainability."
-  }
-];
-
-export interface FeatureItem {
-  title: string;
-  description: string;
-  position: 'left' | 'right';
+export const coffeeProducts: CoffeeProduct[] = [
+{
+id: 'cappuccino',
+name: 'Cappuccino',
+description: 'Cappuccino is a latte made with more foam than steamed milk, often topped with cocoa powder.',
+price: '$3.50',
+rating: 4.9,
+image: '/coffee/cappuccino.jpg',
+features: ['Espresso', 'Steamed Milk', 'Foam']
+},
+{
+id: 'latte',
+name: 'Latte',
+description: 'Latte is a coffee drink made with espresso and steamed milk. Rich, creamy, balanced.',
+price: '$4.00',
+rating: 5.0,
+image: '/coffee/latte.jpg',
+features: ['Espresso', 'Steamed Milk', 'Light Foam']
+},
+{
+id: 'mocha',
+name: 'Mocha',
+description: 'Mocha is a coffee beverage where dark espresso meets rich chocolate and creamy milk.',
+price: '$4.50',
+rating: 4.7,
+image: '/coffee/mocha.jpg',
+features: ['Espresso', 'Chocolate', 'Steamed Milk']
 }
-
-export const features: FeatureItem[] = [
-  {
-    title: "Organic & Shade Grown",
-    description: "Cultivated beneath native canopy trees, preserving biodiversity and nurturing deep, complex flavor profiles.",
-    position: "left"
-  },
-  {
-    title: "SCA Grade 85+",
-    description: "Every batch is certified to score 85+ on the Specialty Coffee Association scale for exceptional quality.",
-    position: "left"
-  },
-  {
-    title: "Precision Roasting",
-    description: "Small-batch convection roast profiles digitally monitored to lock in origin characteristics.",
-    position: "right"
-  },
-  {
-    title: "Direct Trade Ethics",
-    description: "We pay up to 35% above fair-trade standard prices directly to our farming partners globally.",
-    position: "right"
-  }
 ];
-
+export interface FeatureHighlight {
+title: string;
+description: string;
+position: 'left' | 'right';
+}
+export const features: FeatureHighlight[] = [
+{
+title: 'High-Quality Beans',
+description: 'High-quality beans are a single told story about craft, dedication, and the culinary journey where every sip is unique.',
+position: 'left'
+},
+{
+title: 'Individual Approach',
+description: 'Most visitors expect coffee culture today is meticulously designed and economically managed. Individual approach.',
+position: 'right'
+},
+{
+title: 'Atmosphere of Inspiration',
+description: 'Lorem ipsum is dolor sit amet, consectetur adipiscing elit. Suspendisse dapibus tempor incididunt ut.',
+position: 'left'
+},
+{
+title: 'Professional Baristas',
+description: 'Professional Baristas are server professional and deliver rich experiences with every custom coffee crafted perfectly.',
+position: 'right'
+}
+];

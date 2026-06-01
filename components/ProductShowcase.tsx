@@ -1,7 +1,7 @@
 'use client';
 import { motion } from 'framer-motion';
 import ProductCard from './ProductCard';
-import { COFFEE_PRODUCTS as coffeeProducts } from '@/data/products';
+import { coffeeProducts } from '@/data/products';
 
 export default function ProductShowcase() {
   return (
