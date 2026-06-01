@@ -11,6 +11,7 @@ export interface CoffeeProduct {
   tag: string;
   origin: string;
   elevation: string;
+  image: string;
 }
 
 export const COFFEE_PRODUCTS: CoffeeProduct[] = [
@@ -27,6 +28,7 @@ export const COFFEE_PRODUCTS: CoffeeProduct[] = [
     tag: 'Single Origin',
     origin: 'Yirgacheffe, Ethiopia',
     elevation: '1,900m - 2,200m',
+    image: '/coffee/yirgacheffe.jpg',
   },
   {
     id: 'sumatran-mandheling',
@@ -41,6 +43,7 @@ export const COFFEE_PRODUCTS: CoffeeProduct[] = [
     tag: 'Best Seller',
     origin: 'Sumatra, Indonesia',
     elevation: '1,100m - 1,500m',
+    image: '/coffee/mandheling.jpg',
   },
   {
     id: 'guatemalan-antigua',
@@ -55,6 +58,7 @@ export const COFFEE_PRODUCTS: CoffeeProduct[] = [
     tag: 'Limited Batch',
     origin: 'Antigua Valley, Guatemala',
     elevation: '1,500m - 1,800m',
+    image: '/coffee/antigua.jpg',
   },
   {
     id: 'espresso-signature',
@@ -69,6 +73,7 @@ export const COFFEE_PRODUCTS: CoffeeProduct[] = [
     tag: 'Signature Blend',
     origin: 'Brazil & Colombia Blend',
     elevation: '1,200m - 1,600m',
+    image: '/coffee/espresso.jpg',
   }
 ];
 
