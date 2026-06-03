@@ -145,17 +145,44 @@ interface FloatingBean {
 }
 
 // Helper to tint an image with a specific color on an offscreen canvas
-const createTintedCanvas = (img: HTMLImageElement, color: string, alpha: number = 0.5): HTMLCanvasElement => {
+const createTintedCanvas = (img: HTMLImageElement, color: string, alpha: number = 0.5): HTMLCanvasElement | HTMLImageElement => {
+  if (!img || img.width === 0 || img.height === 0) {
+    return img;
+  }
+  
   const canvas = document.createElement('canvas');
   canvas.width = img.width;
   canvas.height = img.height;
   const ctx = canvas.getContext('2d');
   if (ctx) {
+    // 1. Draw the original transparent image
     ctx.drawImage(img, 0, 0);
-    ctx.globalCompositeOperation = 'source-atop';
-    ctx.fillStyle = color;
-    ctx.globalAlpha = alpha;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // 2. Parse hex color to rgb
+    const r = parseInt(color.slice(1, 3), 16);
+    const g = parseInt(color.slice(3, 5), 16);
+    const b = parseInt(color.slice(5, 7), 16);
+    
+    try {
+      // 3. Extract pixel data
+      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imgData.data;
+      
+      // 4. Tint opaque pixels (preserving the exact alpha channel)
+      for (let i = 0; i < data.length; i += 4) {
+        const pixelAlpha = data[i + 3];
+        if (pixelAlpha > 0) {
+          data[i] = Math.round(data[i] * (1 - alpha) + r * alpha);     // Red
+          data[i + 1] = Math.round(data[i + 1] * (1 - alpha) + g * alpha); // Green
+          data[i + 2] = Math.round(data[i + 2] * (1 - alpha) + b * alpha); // Blue
+        }
+      }
+      
+      // 5. Write pixel data back
+      ctx.putImageData(imgData, 0, 0);
+    } catch (e) {
+      console.warn("Tinting failed due to security/sandbox context. Falling back to untinted image.", e);
+    }
   }
   return canvas;
 };
@@ -208,8 +235,11 @@ export default function HeroCanvasAnimation() {
     const frameElements: HTMLImageElement[] = [];
     let framesLoadedCount = 0;
     let framesFailed = false;
+    let isFinished = false; // Flag to prevent multiple state updates
 
     const checkAllLoaded = () => {
+      if (isFinished) return;
+
       // Calculate progress based on loaded status of base assets and frames
       const totalLoaded = baseLoaded + (framesFailed ? 0 : framesLoadedCount);
       const totalToLoad = baseAssetsToLoad.length + (framesFailed ? 0 : TOTAL_FRAMES);
@@ -225,6 +255,7 @@ export default function HeroCanvasAnimation() {
 
         // Set state when either fallback is triggered or all frames are loaded
         if (useFallback || framesLoadedCount === TOTAL_FRAMES) {
+          isFinished = true;
           setAssets({
             studioImg: tempBase.studioImg,
             cafeImg: tempBase.cafeImg,
@@ -334,11 +365,19 @@ export default function HeroCanvasAnimation() {
     const loop = () => {
       time++;
       
-      const scrollVal = smoothProgress.get();
-      const scrollVelVal = scrollVelocity.get();
+      let scrollVal = smoothProgress.get();
+      if (typeof scrollVal !== 'number' || isNaN(scrollVal)) {
+        scrollVal = 0;
+      }
+      
+      let scrollVelVal = scrollVelocity.get();
+      if (typeof scrollVelVal !== 'number' || isNaN(scrollVelVal)) {
+        scrollVelVal = 0;
+      }
 
       // Clear Screen
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.filter = 'none'; // Ensure filter is completely cleared at the start of each frame
 
       // Smooth mouse coordinates with easing
       currentMouseX += (targetMouseX - currentMouseX) * 0.05;
@@ -428,6 +467,8 @@ export default function HeroCanvasAnimation() {
           ctx.filter = `blur(${Math.round((0.5 - bean.depth) * 6)}px)`;
         } else if (bean.depth > 1.0) {
           ctx.filter = `blur(${Math.round((bean.depth - 1.0) * 4)}px)`;
+        } else {
+          ctx.filter = 'none'; // Reset filter for in-focus elements
         }
 
         ctx.translate(beanX, beanY);
