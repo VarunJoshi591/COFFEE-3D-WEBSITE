@@ -1,0 +1,2 @@
+# Keep folder structure for coffee frame-by-frame animation sequences.
+# Supported naming format: /frames/frame_001.png to /frames/frame_060.png (or .jpg)

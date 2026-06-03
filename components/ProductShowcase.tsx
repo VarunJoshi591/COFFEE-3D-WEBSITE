@@ -51,7 +51,7 @@ export default function ProductShowcase() {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-6xl md:text-7xl font-['Playfair_Display'] font-bold text-center text-[#F5E6D3] mb-16"
+          className="text-6xl md:text-7xl font-playfair font-bold text-center text-coffee-text-primary mb-16"
         >
           Our Signature Blends
         </motion.h2>

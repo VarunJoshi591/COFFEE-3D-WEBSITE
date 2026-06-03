@@ -11,13 +11,15 @@ const config: Config = {
       colors: {
         coffee: {
           espresso: '#1A0F0A',      // deep espresso black-brown
-          primary: '#2D1810',       // rich coffee brown
-          secondary: '#3D2820',     // card backgrounds
-          border: '#5A4034',        // subtle borders
-          textPrimary: '#F5E6D3',   // cream/latte text
-          textSecondary: '#C9B8A0', // muted brown
-          accent: '#4F9C8F',        // teal CTA
-          gold: '#FFD700',          // star ratings
+          primary: 'var(--coffee-bg-primary)',       // rich coffee brown
+          secondary: 'var(--coffee-bg-secondary)',     // card backgrounds
+          border: 'var(--coffee-border)',        // subtle borders
+          textPrimary: 'var(--coffee-text-primary)',   // cream/latte text
+          textSecondary: 'var(--coffee-text-secondary)', // muted brown
+          'text-primary': 'var(--coffee-text-primary)',
+          'text-secondary': 'var(--coffee-text-secondary)',
+          accent: 'var(--coffee-accent)',        // teal CTA
+          gold: 'var(--coffee-gold)',          // star ratings
         }
       },
       fontFamily: {

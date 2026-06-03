@@ -2,12 +2,23 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+:root {
+  --coffee-bg-primary: #2D1810;
+  --coffee-bg-secondary: #3D2820;
+  --coffee-border: #5A4034;
+  --coffee-text-primary: #F5E6D3;
+  --coffee-text-secondary: #C9B8A0;
+  --coffee-accent: #4F9C8F;
+  --coffee-gold: #FFD700;
+  --coffee-gradient: linear-gradient(135deg, #2D1810 0%, #1A0F0A 100%);
+}
+
 @layer base {
 body {
-@apply bg-[#1A0F0A] text-[#F5E6D3] font-['Inter'] antialiased;
+  @apply bg-[#1A0F0A] text-[#F5E6D3] font-inter antialiased;
 }
 ::selection {
-@apply bg-[#4F9C8F] text-white;
+  @apply bg-[#4F9C8F] text-white;
 }
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
