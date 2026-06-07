@@ -133,16 +133,6 @@ class SparkParticle {
   }
 }
 
-interface FloatingBean {
-  xPct: number;
-  yPct: number;
-  depth: number;      // 0.2 to 1.2 (for parallax layering)
-  rotation: number;
-  rotSpeed: number;
-  bobOffset: number;
-  bobSpeed: number;
-  bobRange: number;
-}
 
 // Helper to tint an image with a specific color on an offscreen canvas
 const createTintedCanvas = (img: HTMLImageElement, color: string, alpha: number = 0.5): HTMLCanvasElement | HTMLImageElement => {
@@ -311,8 +301,8 @@ export default function HeroCanvasAnimation() {
     const canvas = canvasRef.current;
     if (!assetsLoaded || !canvas || !assets.studioImg || !assets.cafeImg || !assets.beanImg) return;
 
-    const { studioImg, cafeImg, beanImg, frames, useFramesFallback } = assets;
-    if (!studioImg || !cafeImg || !beanImg) return;
+    const { studioImg, cafeImg, frames, useFramesFallback } = assets;
+    if (!studioImg || !cafeImg || !assets.beanImg) return;
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
@@ -330,17 +320,7 @@ export default function HeroCanvasAnimation() {
     const steamParticles: SteamParticle[] = [];
     const sparkParticles: SparkParticle[] = [];
 
-    // Initialize 3D Floating Coffee Beans
-    const beans: FloatingBean[] = Array.from({ length: 15 }, () => ({
-      xPct: 0.05 + Math.random() * 0.9,
-      yPct: 0.1 + Math.random() * 0.8,
-      depth: 0.3 + Math.random() * 0.9, // smaller values = background, larger values = foreground
-      rotation: Math.random() * Math.PI * 2,
-      rotSpeed: (Math.random() * 0.015 - 0.0075),
-      bobOffset: Math.random() * Math.PI * 2,
-      bobSpeed: 0.01 + Math.random() * 0.01,
-      bobRange: 10 + Math.random() * 15
-    }));
+
 
     // Mouse position event tracker
     const handleMouseMove = (e: MouseEvent) => {
@@ -448,37 +428,7 @@ export default function HeroCanvasAnimation() {
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.restore();
 
-      // Helper: Draw floating bean
-      const drawBean = (bean: FloatingBean) => {
-        ctx.save();
-        
-        // Base positioning + depth-dependent parallax offsets
-        const beanX = bean.xPct * canvas.width + currentMouseX * 55 * bean.depth;
-        const beanY = bean.yPct * canvas.height + scrollVal * -250 * bean.depth + Math.sin(time * bean.bobSpeed + bean.bobOffset) * bean.bobRange;
 
-        // Calculate rotation and scale
-        bean.rotation += bean.rotSpeed;
-        const beanScale = bean.depth * 0.16; // Adjust size
-        const w = (beanImg as any).width * beanScale;
-        const h = (beanImg as any).height * beanScale;
-
-        // Depth Blur simulation using canvas filters (if supported)
-        if (bean.depth < 0.5) {
-          ctx.filter = `blur(${Math.round((0.5 - bean.depth) * 6)}px)`;
-        } else if (bean.depth > 1.0) {
-          ctx.filter = `blur(${Math.round((bean.depth - 1.0) * 4)}px)`;
-        } else {
-          ctx.filter = 'none'; // Reset filter for in-focus elements
-        }
-
-        ctx.translate(beanX, beanY);
-        ctx.rotate(bean.rotation);
-        ctx.drawImage(beanImg, -w / 2, -h / 2, w, h);
-        ctx.restore();
-      };
-
-      // 1. Draw Background Beans (depth < 0.6)
-      beans.filter(b => b.depth < 0.6).forEach(drawBean);
 
       // Emitter details: Positioned right above the cup on canvas (linked with cup's vertical float)
       const emitterX = canvas.width / 2 + mouseOffsetX;
@@ -518,8 +468,7 @@ export default function HeroCanvasAnimation() {
         }
       }
 
-      // 4. Draw Foreground Beans (depth >= 0.6)
-      beans.filter(b => b.depth >= 0.6).forEach(drawBean);
+
 
       // Trigger next frame
       animationFrameId = requestAnimationFrame(loop);
