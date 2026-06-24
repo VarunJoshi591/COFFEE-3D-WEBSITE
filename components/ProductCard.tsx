@@ -1,13 +1,15 @@
 'use client';
 import { motion } from 'framer-motion';
 import { CoffeeProduct } from '@/data/products';
-
+import { Plus } from 'lucide-react';
+ 
 interface ProductCardProps {
   product: CoffeeProduct;
   index: number;
+  onAdd?: () => void;
 }
-
-export default function ProductCard({ product, index }: ProductCardProps) {
+ 
+export default function ProductCard({ product, index, onAdd }: ProductCardProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 50 }}
@@ -17,40 +19,40 @@ export default function ProductCard({ product, index }: ProductCardProps) {
       whileHover={{ scale: 1.05, y: -5 }}
       className="bg-coffee-secondary/80 backdrop-blur-sm rounded-2xl p-6 border border-coffee-border hover:border-coffee-accent transition-all duration-300 shadow-xl hover:shadow-2xl hover:shadow-coffee-accent/20"
     >
-      {/* Star Rating */}
-      <div className="flex items-center gap-2 mb-4">
-        <span className="text-coffee-gold text-lg">★</span>
-        <span className="text-coffee-text-primary font-semibold text-sm">{product.rating}</span>
-      </div>
-
-      {/* Coffee Image */}
-      <div className="w-full h-56 bg-coffee-primary rounded-xl mb-5 overflow-hidden">
+      {/* Coffee Image with absolute rating pill */}
+      <div className="relative w-full h-56 bg-coffee-primary rounded-xl mb-5 overflow-hidden">
         <img
           src={product.image}
           alt={product.name}
           className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
         />
+        {/* Star Rating Badge floating on top-left of image */}
+        <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#1A0F0A]/85 border border-[#5A4034]/50 backdrop-blur-sm shadow-md">
+          <span className="text-coffee-gold text-xs">★</span>
+          <span className="text-coffee-text-primary font-bold text-xs">{product.rating.toFixed(1)}</span>
+        </div>
       </div>
-
+ 
       {/* Title & Description */}
       <h3 className="text-xl font-playfair font-bold text-coffee-text-primary mb-3">
         {product.name}
       </h3>
-      <p className="text-sm text-coffee-text-secondary mb-5 line-clamp-2 font-inter">
+      <p className="text-sm text-coffee-text-secondary mb-5 line-clamp-2 font-inter leading-relaxed">
         {product.description}
       </p>
-
+ 
       {/* Price & Add Button */}
       <div className="flex items-center justify-between">
-        <span className="text-3xl font-bold text-coffee-text-primary font-inter">
+        <span className="text-3xl font-bold text-coffee-accent font-inter">
           {product.price}
         </span>
         <motion.button
+          onClick={onAdd}
           whileHover={{ scale: 1.1, rotate: 90 }}
           whileTap={{ scale: 0.9 }}
-          className="w-12 h-12 rounded-full bg-gradient-to-br from-coffee-accent to-[#3D8B7F] flex items-center justify-center hover:shadow-lg hover:shadow-coffee-accent/40 transition-shadow"
+          className="w-12 h-12 rounded-full bg-gradient-to-br from-coffee-accent to-[#3D8B7F] flex items-center justify-center hover:shadow-lg hover:shadow-coffee-accent/40 transition-shadow text-white"
         >
-          <span className="text-white text-2xl font-bold">+</span>
+          <Plus className="w-5 h-5" strokeWidth={3} />
         </motion.button>
       </div>
     </motion.div>

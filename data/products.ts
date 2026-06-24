@@ -42,24 +42,24 @@ description: string;
 position: 'left' | 'right';
 }
 export const features: FeatureHighlight[] = [
-{
-title: 'High-Quality Beans',
-description: 'High-quality beans are a single told story about craft, dedication, and the culinary journey where every sip is unique.',
-position: 'left'
-},
-{
-title: 'Individual Approach',
-description: 'Most visitors expect coffee culture today is meticulously designed and economically managed. Individual approach.',
-position: 'right'
-},
-{
-title: 'Atmosphere of Inspiration',
-description: 'Lorem ipsum is dolor sit amet, consectetur adipiscing elit. Suspendisse dapibus tempor incididunt ut.',
-position: 'left'
-},
-{
-title: 'Professional Baristas',
-description: 'Professional Baristas are server professional and deliver rich experiences with every custom coffee crafted perfectly.',
-position: 'right'
-}
+  {
+    title: 'High-Quality Beans',
+    description: 'Hand-picked single-origin beans roasted to perfection in small batches.',
+    position: 'left'
+  },
+  {
+    title: 'Individual Approach',
+    description: 'Every cup is crafted with care to suit your unique taste preferences.',
+    position: 'left'
+  },
+  {
+    title: 'Atmosphere of Inspiration',
+    description: 'An ambiance designed to spark creativity and moments of stillness.',
+    position: 'right'
+  },
+  {
+    title: 'Professional Baristas',
+    description: 'Award-winning baristas dedicated to the art of the perfect pour.',
+    position: 'right'
+  }
 ];

@@ -133,6 +133,17 @@ class SparkParticle {
   }
 }
 
+interface FloatingBean {
+  xPct: number;
+  yPct: number;
+  depth: number;      // 0.2 to 1.2 (for parallax layering)
+  rotation: number;
+  rotSpeed: number;
+  bobOffset: number;
+  bobSpeed: number;
+  bobRange: number;
+}
+
 
 // Helper to tint an image with a specific color on an offscreen canvas
 const createTintedCanvas = (img: HTMLImageElement, color: string, alpha: number = 0.5): HTMLCanvasElement | HTMLImageElement => {
@@ -199,8 +210,8 @@ export default function HeroCanvasAnimation() {
   });
 
   const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 90,
-    damping: 25,
+    stiffness: 100,
+    damping: 30,
     restDelta: 0.001
   });
 
@@ -209,7 +220,7 @@ export default function HeroCanvasAnimation() {
     damping: 30
   });
 
-  const TOTAL_FRAMES = 60;
+  const TOTAL_FRAMES = 120;
 
   // Preload primary design assets and animation frames
   useEffect(() => {
@@ -274,14 +285,13 @@ export default function HeroCanvasAnimation() {
       };
     });
 
-    // Load frame sequences: frame_001.png to frame_060.png
-    for (let i = 1; i <= TOTAL_FRAMES; i++) {
+    // Load frame sequences: frame_0.webp to frame_119.webp
+    for (let i = 0; i < TOTAL_FRAMES; i++) {
       const img = new Image();
-      const frameNum = String(i).padStart(3, '0');
-      img.src = `/frames/frame_${frameNum}.png`;
+      img.src = `/frames/frame_${i}.webp`;
       img.onload = () => {
         if (!framesFailed) {
-          frameElements[i - 1] = img;
+          frameElements[i] = img;
           framesLoadedCount++;
           checkAllLoaded();
         }
@@ -301,8 +311,8 @@ export default function HeroCanvasAnimation() {
     const canvas = canvasRef.current;
     if (!assetsLoaded || !canvas || !assets.studioImg || !assets.cafeImg || !assets.beanImg) return;
 
-    const { studioImg, cafeImg, frames, useFramesFallback } = assets;
-    if (!studioImg || !cafeImg || !assets.beanImg) return;
+    const { studioImg, cafeImg, beanImg, frames, useFramesFallback } = assets;
+    if (!studioImg || !cafeImg || !beanImg) return;
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
@@ -319,6 +329,18 @@ export default function HeroCanvasAnimation() {
     // Particle arrays
     const steamParticles: SteamParticle[] = [];
     const sparkParticles: SparkParticle[] = [];
+
+    // Initialize 3D Floating Coffee Beans
+    const beans: FloatingBean[] = Array.from({ length: 15 }, () => ({
+      xPct: 0.05 + Math.random() * 0.9,
+      yPct: 0.1 + Math.random() * 0.8,
+      depth: 0.3 + Math.random() * 0.9, // smaller values = background, larger values = foreground
+      rotation: Math.random() * Math.PI * 2,
+      rotSpeed: (Math.random() * 0.015 - 0.0075),
+      bobOffset: Math.random() * Math.PI * 2,
+      bobSpeed: 0.01 + Math.random() * 0.01,
+      bobRange: 10 + Math.random() * 15
+    }));
 
 
 
@@ -357,7 +379,6 @@ export default function HeroCanvasAnimation() {
 
       // Clear Screen
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.filter = 'none'; // Ensure filter is completely cleared at the start of each frame
 
       // Smooth mouse coordinates with easing
       currentMouseX += (targetMouseX - currentMouseX) * 0.05;
@@ -381,22 +402,24 @@ export default function HeroCanvasAnimation() {
         if (alpha <= 0) return;
         ctx.save();
         ctx.globalAlpha = alpha;
-
-        // Base Cover calculations
-        const scale = Math.max(canvas.width / img.width, canvas.height / img.height) * zoomFactor;
+ 
+        // Base Contain calculations with mobile scale optimization
+        const isMobile = canvas.width < 768;
+        const mobileScaleMultiplier = isMobile ? 1.35 : 1.0;
+        const scale = Math.min(canvas.width / img.width, canvas.height / img.height) * zoomFactor * mobileScaleMultiplier;
         const w = img.width * scale;
         const h = img.height * scale;
         
         // Centered coordinates + mouse parallax + scroll offsets + vertical spring offset
         const x = (canvas.width - w) / 2 + mouseOffsetX;
         const y = (canvas.height - h) / 2 + mouseOffsetY + scrollOffsetY + cupYOffset;
-
+ 
         ctx.drawImage(img, x, y, w, h);
         ctx.restore();
       };
 
       if (!useFramesFallback && frames.length === TOTAL_FRAMES) {
-        // Frame-by-frame mode: Map scrollProgress (0 to 1) to active frame index (0 to 59)
+        // Frame-by-frame mode: Map scrollProgress (0 to 1) to active frame index (0 to 119)
         const frameIndex = Math.min(TOTAL_FRAMES - 1, Math.floor(scrollVal * TOTAL_FRAMES));
         const activeFrame = frames[frameIndex];
         if (activeFrame) {
@@ -428,11 +451,42 @@ export default function HeroCanvasAnimation() {
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.restore();
 
+      // Helper: Draw floating bean
+      const drawBean = (bean: FloatingBean) => {
+        ctx.save();
+        
+        // Base positioning + depth-dependent parallax offsets
+        const beanX = bean.xPct * canvas.width + currentMouseX * 55 * bean.depth;
+        const beanY = bean.yPct * canvas.height + scrollVal * -250 * bean.depth + Math.sin(time * bean.bobSpeed + bean.bobOffset) * bean.bobRange;
+
+        // Calculate rotation and scale
+        bean.rotation += bean.rotSpeed;
+        const beanScale = bean.depth * 0.16; // Adjust size
+        const w = (beanImg as any).width * beanScale;
+        const h = (beanImg as any).height * beanScale;
+
+        // Depth-based opacity instead of extremely slow canvas filter blur
+        ctx.globalAlpha = Math.max(0.3, Math.min(1.0, bean.depth));
+
+        ctx.translate(beanX, beanY);
+        ctx.rotate(bean.rotation);
+        ctx.drawImage(beanImg, -w / 2, -h / 2, w, h);
+        ctx.restore();
+      };
+
+      // 1. Draw Background Beans (depth < 0.6)
+      beans.filter(b => b.depth < 0.6).forEach(drawBean);
 
 
-      // Emitter details: Positioned right above the cup on canvas (linked with cup's vertical float)
+
+      // Emitter details: Positioned right above the cup on canvas (linked with cup's vertical float and responsive scaling)
+      const isMobile = canvas.width < 768;
+      const mobileScaleMultiplier = isMobile ? 1.35 : 1.0;
+      const baseScale = Math.min(canvas.width / (studioImg?.width || 1920), canvas.height / (studioImg?.height || 1080)) * zoomFactor * mobileScaleMultiplier;
+      const cupH = (studioImg?.height || 1080) * baseScale;
+      const cupTopY = (canvas.height - cupH) / 2 + mouseOffsetY + scrollOffsetY + cupYOffset;
       const emitterX = canvas.width / 2 + mouseOffsetX;
-      const emitterY = canvas.height * 0.64 + mouseOffsetY + scrollOffsetY + cupYOffset;
+      const emitterY = cupTopY + cupH * 0.64;
 
       // 2. Spawn & Draw Steam Particles
       const spawnSteamInterval = Math.max(2, Math.round(6 - Math.abs(scrollVelVal) * 50));
@@ -467,6 +521,9 @@ export default function HeroCanvasAnimation() {
           p.draw(ctx);
         }
       }
+
+      // 4. Draw Foreground Beans (depth >= 0.6)
+      beans.filter(b => b.depth >= 0.6).forEach(drawBean);
 
 
 
@@ -509,7 +566,7 @@ export default function HeroCanvasAnimation() {
   }
 
   return (
-    <div ref={containerRef} className="relative h-[500vh]">
+    <div id="hero" ref={containerRef} className="relative h-[500vh]">
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         <canvas ref={canvasRef} className="absolute inset-0 w-full h-full block" />
 
@@ -519,55 +576,64 @@ export default function HeroCanvasAnimation() {
           {/* Section 1 */}
           <motion.div style={{ opacity: section1Opacity }} className="text-center px-4 max-w-3xl">
             <span className="text-[#4F9C8F] font-bold tracking-[0.3em] uppercase text-xs md:text-sm block mb-3 font-inter">
-              Introducing L&apos;Aroma
+              BREWHAUS · EST. 2014
             </span>
-            <h1 className="text-8xl md:text-9xl font-playfair font-bold text-amber-50/95 mb-6 tracking-tighter leading-none drop-shadow-[0_0_25px_rgba(253,251,235,0.35)]">
-              Experience Coffee
+            <h1 className="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-playfair font-bold text-amber-50/95 tracking-tighter leading-none drop-shadow-[0_0_25px_rgba(253,251,235,0.35)] flex flex-col items-center">
+              <span>Experience</span>
+              <span className="italic font-playfair font-normal text-coffee-accent mt-2">Coffee</span>
             </h1>
-            <p className="text-lg md:text-2xl text-[#C9B8A0] font-inter max-w-xl mx-auto font-light leading-relaxed">
-              Where every sensory note defies gravity and floats in perfect equilibrium.
+            <p className="text-sm sm:text-base md:text-xl text-[#C9B8A0] font-inter max-w-xl mx-auto font-light leading-relaxed mt-6">
+              Where each bean tells a story and every sip is a quiet ritual. Discover blends crafted by master baristas.
             </p>
+            <div className="mt-8 pointer-events-auto">
+              <a
+                href="#blends"
+                className="inline-block px-8 py-3.5 bg-coffee-accent text-coffee-espresso rounded-full text-xs md:text-sm font-bold font-inter tracking-widest uppercase hover:scale-105 active:scale-95 transition-transform duration-300 shadow-lg shadow-coffee-accent/20 hover:shadow-coffee-accent/40"
+              >
+                Discover Blends
+              </a>
+            </div>
           </motion.div>
-
+ 
           {/* Section 2 */}
-          <motion.div style={{ opacity: section2Opacity }} className="text-left px-8 md:px-24 max-w-3xl mr-auto">
+          <motion.div style={{ opacity: section2Opacity }} className="text-center lg:text-left px-6 sm:px-12 md:px-24 max-w-3xl lg:mr-auto lg:ml-0 mx-auto">
             <span className="text-[#D4A574] font-bold tracking-[0.3em] uppercase text-xs md:text-sm block mb-3 font-inter">
               The Alchemy of Taste
             </span>
-            <h2 className="text-5xl md:text-7xl font-playfair font-semibold text-amber-50/95 mb-4 tracking-tight leading-tight drop-shadow-[0_0_20px_rgba(253,251,235,0.25)]">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-playfair font-semibold text-amber-50/95 mb-4 tracking-tight leading-tight drop-shadow-[0_0_20px_rgba(253,251,235,0.25)]">
               Crafted to Perfection
             </h2>
-            <p className="text-base md:text-lg text-[#C9B8A0] font-inter max-w-md font-light leading-relaxed">
+            <p className="text-sm sm:text-base md:text-lg text-[#C9B8A0] font-inter max-w-md mx-auto lg:mx-0 font-light leading-relaxed">
               From hand-selected single-origin beans to precision micro-roasting, excellence floats in every warm drop.
             </p>
           </motion.div>
-
+ 
           {/* Section 3 */}
-          <motion.div style={{ opacity: section3Opacity }} className="text-right px-8 md:px-24 max-w-3xl ml-auto">
+          <motion.div style={{ opacity: section3Opacity }} className="text-center lg:text-right px-6 sm:px-12 md:px-24 max-w-3xl lg:ml-auto lg:mr-0 mx-auto">
             <span className="text-[#4F9C8F] font-bold tracking-[0.3em] uppercase text-xs md:text-sm block mb-3 font-inter">
               Procedural Sensation
             </span>
-            <h2 className="text-5xl md:text-7xl font-playfair font-semibold text-amber-50/95 mb-4 tracking-tight leading-tight drop-shadow-[0_0_20px_rgba(253,251,235,0.25)]">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-playfair font-semibold text-amber-50/95 mb-4 tracking-tight leading-tight drop-shadow-[0_0_20px_rgba(253,251,235,0.25)]">
               Anti-Gravity Flavor
             </h2>
-            <p className="text-base md:text-lg text-[#C9B8A0] font-inter max-w-md ml-auto font-light leading-relaxed">
+            <p className="text-sm sm:text-base md:text-lg text-[#C9B8A0] font-inter max-w-md mx-auto lg:mr-0 lg:ml-auto font-light leading-relaxed">
               Defying expectations and elevating taste beyond the physical limits of traditional brewing.
             </p>
           </motion.div>
-
+ 
           {/* Section 4 */}
           <motion.div style={{ opacity: section4Opacity }} className="text-center px-4 max-w-3xl">
             <span className="text-[#D4A574] font-bold tracking-[0.3em] uppercase text-xs md:text-sm block mb-4 font-inter">
               Ready to Brew
             </span>
-            <h2 className="text-5xl md:text-8xl font-playfair font-bold text-amber-50/95 mb-8 tracking-tighter drop-shadow-[0_0_25px_rgba(253,251,235,0.35)]">
+            <h2 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-playfair font-bold text-amber-50/95 mb-8 tracking-tighter drop-shadow-[0_0_25px_rgba(253,251,235,0.35)]">
               Discover Your Blend
             </h2>
             <motion.a
               href="#blends"
               whileHover={{ scale: 1.05, boxShadow: '0 10px 30px rgba(79, 156, 143, 0.4)' }}
               whileTap={{ scale: 0.95 }}
-              className="inline-block px-10 py-5 bg-gradient-to-r from-[#4F9C8F] to-[#3D8B7F] text-white rounded-full text-lg font-bold font-inter shadow-2xl pointer-events-auto tracking-wider uppercase"
+              className="inline-block px-8 py-4 md:px-10 md:py-5 bg-gradient-to-r from-[#4F9C8F] to-[#3D8B7F] text-white rounded-full text-sm md:text-lg font-bold font-inter shadow-2xl pointer-events-auto tracking-widest uppercase"
             >
               Explore Collection ↓
             </motion.a>
