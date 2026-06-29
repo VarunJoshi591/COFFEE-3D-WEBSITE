@@ -420,6 +420,7 @@ export default function HeroCanvasAnimation() {
         ctx.restore();
       };
 
+      /*
       if (!useFramesFallback && frames.length === TOTAL_FRAMES) {
         // Frame-by-frame mode: Map scrollProgress (0 to 1) to active frame index (0 to 119)
         const frameIndex = Math.min(TOTAL_FRAMES - 1, Math.floor(scrollVal * TOTAL_FRAMES));
@@ -434,6 +435,7 @@ export default function HeroCanvasAnimation() {
         drawImageCenter(cafeImg, cafeOpacity);
         drawImageCenter(studioImg, studioOpacity);
       }
+      */
 
       // Vignette effect to blend background images seamlessly with the deep espresso #1A0F0A background
       ctx.save();
