@@ -202,10 +202,19 @@ export default function HeroCanvasAnimation() {
   
   const [assetsLoaded, setAssetsLoaded] = useState(false);
   const [loadProgress, setLoadProgress] = useState(0);
-
+ 
+  // Track mount state to avoid useScroll target hydration runtime errors
+  const [targetElement, setTargetElement] = useState<HTMLElement | null>(null);
+ 
+  useEffect(() => {
+    if (containerRef.current) {
+      setTargetElement(containerRef.current);
+    }
+  }, []);
+ 
   // Smooth scroll-driven parallax hooks
   const { scrollYProgress } = useScroll({
-    target: containerRef,
+    target: targetElement ? containerRef : undefined,
     offset: ['start start', 'end start']
   });
 
@@ -229,46 +238,63 @@ export default function HeroCanvasAnimation() {
       { key: 'cafeImg', src: '/cup_cafe.jpg' },
       { key: 'beanImg', src: '/coffee/bean.png' }
     ];
-
+ 
     let baseLoaded = 0;
     const tempBase: any = {};
-
+ 
     const frameElements: HTMLImageElement[] = [];
     let framesLoadedCount = 0;
     let framesFailed = false;
     let isFinished = false; // Flag to prevent multiple state updates
-
-    const checkAllLoaded = () => {
-      if (isFinished) return;
-
-      // Calculate progress based on loaded status of base assets and frames
-      const totalLoaded = baseLoaded + (framesFailed ? 0 : framesLoadedCount);
-      const totalToLoad = baseAssetsToLoad.length + (framesFailed ? 0 : TOTAL_FRAMES);
-      setLoadProgress((totalLoaded / totalToLoad) * 100);
-
-      // Check if we can resolve asset state (base assets are mandatory)
-      if (baseLoaded === baseAssetsToLoad.length) {
-        const loadedBeanImg = tempBase.beanImg;
-        // Apply #D4A574 tint to floating coffee bean particles
-        const tintedBean = loadedBeanImg ? createTintedCanvas(loadedBeanImg, '#D4A574', 0.45) : null;
-
-        const useFallback = framesFailed || frameElements.length === 0;
-
-        // Set state when either fallback is triggered or all frames are loaded
-        if (useFallback || framesLoadedCount === TOTAL_FRAMES) {
-          isFinished = true;
-          setAssets({
-            studioImg: tempBase.studioImg,
-            cafeImg: tempBase.cafeImg,
-            beanImg: tintedBean,
-            frames: useFallback ? [] : frameElements,
-            useFramesFallback: useFallback
-          });
-          setAssetsLoaded(true);
-        }
+ 
+    const resolveBaseAssets = () => {
+      const loadedBeanImg = tempBase.beanImg;
+      // Apply #D4A574 tint to floating coffee bean particles
+      const tintedBean = loadedBeanImg ? createTintedCanvas(loadedBeanImg, '#D4A574', 0.45) : null;
+ 
+      // Set baseline assets immediately so page mounts fast
+      setAssets({
+        studioImg: tempBase.studioImg,
+        cafeImg: tempBase.cafeImg,
+        beanImg: tintedBean,
+        frames: [],
+        useFramesFallback: true
+      });
+      setAssetsLoaded(true);
+ 
+      // Start loading frames in background after baseline resolves
+      preloadFrames();
+    };
+ 
+    const preloadFrames = () => {
+      // Load frame sequences: frame_0.webp to frame_119.webp
+      for (let i = 0; i < TOTAL_FRAMES; i++) {
+        const img = new Image();
+        img.src = `/frames/frame_${i}.webp`;
+        img.onload = () => {
+          if (!framesFailed) {
+            frameElements[i] = img;
+            framesLoadedCount++;
+            
+            if (framesLoadedCount === TOTAL_FRAMES && !isFinished) {
+              isFinished = true;
+              setAssets(prev => ({
+                ...prev,
+                frames: frameElements,
+                useFramesFallback: false
+              }));
+            }
+          }
+        };
+        img.onerror = () => {
+          if (!framesFailed) {
+            framesFailed = true;
+            console.warn("Canvas animation frame sequences not found or incomplete. Keeping smooth cross-fade fallback.");
+          }
+        };
       }
     };
-
+ 
     // Load baseline images
     baseAssetsToLoad.forEach((asset) => {
       const img = new Image();
@@ -276,34 +302,20 @@ export default function HeroCanvasAnimation() {
       img.onload = () => {
         tempBase[asset.key] = img;
         baseLoaded++;
-        checkAllLoaded();
+        setLoadProgress((baseLoaded / baseAssetsToLoad.length) * 100);
+        if (baseLoaded === baseAssetsToLoad.length) {
+          resolveBaseAssets();
+        }
       };
       img.onerror = () => {
         console.error(`Failed to load baseline asset: ${asset.src}`);
         baseLoaded++;
-        checkAllLoaded();
+        setLoadProgress((baseLoaded / baseAssetsToLoad.length) * 100);
+        if (baseLoaded === baseAssetsToLoad.length) {
+          resolveBaseAssets();
+        }
       };
     });
-
-    // Load frame sequences: frame_0.webp to frame_119.webp
-    for (let i = 0; i < TOTAL_FRAMES; i++) {
-      const img = new Image();
-      img.src = `/frames/frame_${i}.webp`;
-      img.onload = () => {
-        if (!framesFailed) {
-          frameElements[i] = img;
-          framesLoadedCount++;
-          checkAllLoaded();
-        }
-      };
-      img.onerror = () => {
-        if (!framesFailed) {
-          framesFailed = true;
-          console.warn("Canvas animation frame sequences not found. Falling back to smooth cross-fade scene animation.");
-          checkAllLoaded();
-        }
-      };
-    }
   }, []);
 
   // Main canvas animation logic
@@ -330,17 +342,7 @@ export default function HeroCanvasAnimation() {
     const steamParticles: SteamParticle[] = [];
     const sparkParticles: SparkParticle[] = [];
 
-    // Initialize 3D Floating Coffee Beans
-    const beans: FloatingBean[] = Array.from({ length: 15 }, () => ({
-      xPct: 0.05 + Math.random() * 0.9,
-      yPct: 0.1 + Math.random() * 0.8,
-      depth: 0.3 + Math.random() * 0.9, // smaller values = background, larger values = foreground
-      rotation: Math.random() * Math.PI * 2,
-      rotSpeed: (Math.random() * 0.015 - 0.0075),
-      bobOffset: Math.random() * Math.PI * 2,
-      bobSpeed: 0.01 + Math.random() * 0.01,
-      bobRange: 10 + Math.random() * 15
-    }));
+
 
 
 
@@ -418,6 +420,7 @@ export default function HeroCanvasAnimation() {
         ctx.restore();
       };
 
+      /*
       if (!useFramesFallback && frames.length === TOTAL_FRAMES) {
         // Frame-by-frame mode: Map scrollProgress (0 to 1) to active frame index (0 to 119)
         const frameIndex = Math.min(TOTAL_FRAMES - 1, Math.floor(scrollVal * TOTAL_FRAMES));
@@ -432,6 +435,7 @@ export default function HeroCanvasAnimation() {
         drawImageCenter(cafeImg, cafeOpacity);
         drawImageCenter(studioImg, studioOpacity);
       }
+      */
 
       // Vignette effect to blend background images seamlessly with the deep espresso #1A0F0A background
       ctx.save();
@@ -451,31 +455,7 @@ export default function HeroCanvasAnimation() {
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.restore();
 
-      // Helper: Draw floating bean
-      const drawBean = (bean: FloatingBean) => {
-        ctx.save();
-        
-        // Base positioning + depth-dependent parallax offsets
-        const beanX = bean.xPct * canvas.width + currentMouseX * 55 * bean.depth;
-        const beanY = bean.yPct * canvas.height + scrollVal * -250 * bean.depth + Math.sin(time * bean.bobSpeed + bean.bobOffset) * bean.bobRange;
 
-        // Calculate rotation and scale
-        bean.rotation += bean.rotSpeed;
-        const beanScale = bean.depth * 0.16; // Adjust size
-        const w = (beanImg as any).width * beanScale;
-        const h = (beanImg as any).height * beanScale;
-
-        // Depth-based opacity instead of extremely slow canvas filter blur
-        ctx.globalAlpha = Math.max(0.3, Math.min(1.0, bean.depth));
-
-        ctx.translate(beanX, beanY);
-        ctx.rotate(bean.rotation);
-        ctx.drawImage(beanImg, -w / 2, -h / 2, w, h);
-        ctx.restore();
-      };
-
-      // 1. Draw Background Beans (depth < 0.6)
-      beans.filter(b => b.depth < 0.6).forEach(drawBean);
 
 
 
@@ -522,8 +502,7 @@ export default function HeroCanvasAnimation() {
         }
       }
 
-      // 4. Draw Foreground Beans (depth >= 0.6)
-      beans.filter(b => b.depth >= 0.6).forEach(drawBean);
+
 
 
 
