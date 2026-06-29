@@ -420,7 +420,6 @@ export default function HeroCanvasAnimation() {
         ctx.restore();
       };
 
-      /*
       if (!useFramesFallback && frames.length === TOTAL_FRAMES) {
         // Frame-by-frame mode: Map scrollProgress (0 to 1) to active frame index (0 to 119)
         const frameIndex = Math.min(TOTAL_FRAMES - 1, Math.floor(scrollVal * TOTAL_FRAMES));
@@ -435,7 +434,6 @@ export default function HeroCanvasAnimation() {
         drawImageCenter(cafeImg, cafeOpacity);
         drawImageCenter(studioImg, studioOpacity);
       }
-      */
 
       // Vignette effect to blend background images seamlessly with the deep espresso #1A0F0A background
       ctx.save();
@@ -520,7 +518,7 @@ export default function HeroCanvasAnimation() {
   }, [assetsLoaded, assets, smoothProgress, scrollVelocity]);
 
   // Section text opacity calculations (synced with scrolling progress)
-  const section1Opacity = useTransform(smoothProgress, [0, 0.08, 0.18, 0.24], [0, 1, 1, 0]);
+  const section1Opacity = useTransform(smoothProgress, [0, 0.08, 0.18, 0.24], [1, 1, 1, 0]);
   const section2Opacity = useTransform(smoothProgress, [0.28, 0.34, 0.48, 0.54], [0, 1, 1, 0]);
   const section3Opacity = useTransform(smoothProgress, [0.58, 0.64, 0.78, 0.84], [0, 1, 1, 0]);
   const section4Opacity = useTransform(smoothProgress, [0.88, 0.93, 0.98, 1.0], [0, 1, 1, 0]);
@@ -550,90 +548,95 @@ export default function HeroCanvasAnimation() {
         <canvas ref={canvasRef} className="absolute inset-0 w-full h-full block" />
 
         {/* Cinematic Text Overlays */}
-        <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+        <div className="absolute inset-0 pointer-events-none">
           
           {/* Section 1 */}
-          <motion.div style={{ opacity: section1Opacity }} className="text-center px-4 max-w-3xl">
-            <span className="text-[#4F9C8F] font-bold tracking-[0.3em] uppercase text-xs md:text-sm block mb-3 font-inter">
-              BREWHAUS · EST. 2014
-            </span>
-            <h1 className="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-playfair font-bold text-amber-50/95 tracking-tighter leading-none drop-shadow-[0_0_25px_rgba(253,251,235,0.35)] flex flex-col items-center">
-              <span>Experience</span>
-              <span className="italic font-playfair font-normal text-coffee-accent mt-2">Coffee</span>
-            </h1>
-            <p className="text-sm sm:text-base md:text-xl text-[#C9B8A0] font-inter max-w-xl mx-auto font-light leading-relaxed mt-6">
-              Where each bean tells a story and every sip is a quiet ritual. Discover blends crafted by master baristas.
-            </p>
-            <div className="mt-8 pointer-events-auto">
-              <a
-                href="#blends"
-                className="inline-block px-8 py-3.5 bg-coffee-accent text-coffee-espresso rounded-full text-xs md:text-sm font-bold font-inter tracking-widest uppercase hover:scale-105 active:scale-95 transition-transform duration-300 shadow-lg shadow-coffee-accent/20 hover:shadow-coffee-accent/40"
-              >
-                Discover Blends
-              </a>
+          <motion.div style={{ opacity: section1Opacity }} className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center">
+            <div className="max-w-3xl">
+              <span className="text-[#4F9C8F] font-bold tracking-[0.3em] uppercase text-xs md:text-sm block mb-3 font-inter">
+                BREWHAUS · EST. 2014
+              </span>
+              <h1 className="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-playfair font-bold text-amber-50/95 tracking-tighter leading-none drop-shadow-[0_0_25px_rgba(253,251,235,0.35)] flex flex-col items-center">
+                <span>Experience</span>
+                <span className="italic font-playfair font-normal text-coffee-accent mt-2">Coffee</span>
+              </h1>
+              <p className="text-sm sm:text-base md:text-xl text-[#C9B8A0] font-inter max-w-xl mx-auto font-light leading-relaxed mt-6">
+                Where each bean tells a story and every sip is a quiet ritual. Discover blends crafted by master baristas.
+              </p>
+              <div className="mt-8 pointer-events-auto">
+                <a
+                  href="#blends"
+                  className="inline-block px-8 py-3.5 bg-coffee-accent text-coffee-espresso rounded-full text-xs md:text-sm font-bold font-inter tracking-widest uppercase hover:scale-105 active:scale-95 transition-transform duration-300 shadow-lg shadow-coffee-accent/20 hover:shadow-coffee-accent/40"
+                >
+                  Discover Blends
+                </a>
+              </div>
             </div>
           </motion.div>
- 
+  
           {/* Section 2 */}
-          <motion.div style={{ opacity: section2Opacity }} className="text-center lg:text-left px-6 sm:px-12 md:px-24 max-w-3xl lg:mr-auto lg:ml-0 mx-auto">
-            <span className="text-[#D4A574] font-bold tracking-[0.3em] uppercase text-xs md:text-sm block mb-3 font-inter">
-              The Alchemy of Taste
-            </span>
-            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-playfair font-semibold text-amber-50/95 mb-4 tracking-tight leading-tight drop-shadow-[0_0_20px_rgba(253,251,235,0.25)]">
-              Crafted to Perfection
-            </h2>
-            <p className="text-sm sm:text-base md:text-lg text-[#C9B8A0] font-inter max-w-md mx-auto lg:mx-0 font-light leading-relaxed">
-              From hand-selected single-origin beans to precision micro-roasting, excellence floats in every warm drop.
-            </p>
+          <motion.div style={{ opacity: section2Opacity }} className="absolute inset-0 flex flex-col justify-center items-center lg:items-start px-6 sm:px-12 md:px-24 text-center lg:text-left">
+            <div className="max-w-3xl lg:mr-auto lg:ml-0 mx-auto">
+              <span className="text-[#D4A574] font-bold tracking-[0.3em] uppercase text-xs md:text-sm block mb-3 font-inter">
+                The Alchemy of Taste
+              </span>
+              <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-playfair font-semibold text-amber-50/95 mb-4 tracking-tight leading-tight drop-shadow-[0_0_20px_rgba(253,251,235,0.25)]">
+                Crafted to Perfection
+              </h2>
+              <p className="text-sm sm:text-base md:text-lg text-[#C9B8A0] font-inter max-w-md mx-auto lg:mx-0 font-light leading-relaxed">
+                From hand-selected single-origin beans to precision micro-roasting, excellence floats in every warm drop.
+              </p>
+            </div>
           </motion.div>
- 
+  
           {/* Section 3 */}
-          <motion.div style={{ opacity: section3Opacity }} className="text-center lg:text-right px-6 sm:px-12 md:px-24 max-w-3xl lg:ml-auto lg:mr-0 mx-auto">
-            <span className="text-[#4F9C8F] font-bold tracking-[0.3em] uppercase text-xs md:text-sm block mb-3 font-inter">
-              Procedural Sensation
-            </span>
-            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-playfair font-semibold text-amber-50/95 mb-4 tracking-tight leading-tight drop-shadow-[0_0_20px_rgba(253,251,235,0.25)]">
-              Anti-Gravity Flavor
-            </h2>
-            <p className="text-sm sm:text-base md:text-lg text-[#C9B8A0] font-inter max-w-md mx-auto lg:mr-0 lg:ml-auto font-light leading-relaxed">
-              Defying expectations and elevating taste beyond the physical limits of traditional brewing.
-            </p>
+          <motion.div style={{ opacity: section3Opacity }} className="absolute inset-0 flex flex-col justify-center items-center lg:items-end px-6 sm:px-12 md:px-24 text-center lg:text-right">
+            <div className="max-w-3xl lg:ml-auto lg:mr-0 mx-auto">
+              <span className="text-[#4F9C8F] font-bold tracking-[0.3em] uppercase text-xs md:text-sm block mb-3 font-inter">
+                Procedural Sensation
+              </span>
+              <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-playfair font-semibold text-amber-50/95 mb-4 tracking-tight leading-tight drop-shadow-[0_0_20px_rgba(253,251,235,0.25)]">
+                Anti-Gravity Flavor
+              </h2>
+              <p className="text-sm sm:text-base md:text-lg text-[#C9B8A0] font-inter max-w-md mx-auto lg:mr-0 lg:ml-auto font-light leading-relaxed">
+                Defying expectations and elevating taste beyond the physical limits of traditional brewing.
+              </p>
+            </div>
           </motion.div>
- 
+  
           {/* Section 4 */}
-          <motion.div style={{ opacity: section4Opacity }} className="text-center px-4 max-w-3xl">
-            <span className="text-[#D4A574] font-bold tracking-[0.3em] uppercase text-xs md:text-sm block mb-4 font-inter">
-              Ready to Brew
-            </span>
-            <h2 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-playfair font-bold text-amber-50/95 mb-8 tracking-tighter drop-shadow-[0_0_25px_rgba(253,251,235,0.35)]">
-              Discover Your Blend
-            </h2>
-            <motion.a
-              href="#blends"
-              whileHover={{ scale: 1.05, boxShadow: '0 10px 30px rgba(79, 156, 143, 0.4)' }}
-              whileTap={{ scale: 0.95 }}
-              className="inline-block px-8 py-4 md:px-10 md:py-5 bg-gradient-to-r from-[#4F9C8F] to-[#3D8B7F] text-white rounded-full text-sm md:text-lg font-bold font-inter shadow-2xl pointer-events-auto tracking-widest uppercase"
-            >
-              Explore Collection ↓
-            </motion.a>
+          <motion.div style={{ opacity: section4Opacity }} className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center">
+            <div className="max-w-3xl">
+              <span className="text-[#D4A574] font-bold tracking-[0.3em] uppercase text-xs md:text-sm block mb-4 font-inter">
+                Ready to Brew
+              </span>
+              <h2 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-playfair font-bold text-amber-50/95 mb-8 tracking-tighter drop-shadow-[0_0_25px_rgba(253,251,235,0.35)]">
+                Discover Your Blend
+              </h2>
+              <motion.a
+                href="#blends"
+                whileHover={{ scale: 1.05, boxShadow: '0 10px 30px rgba(79, 156, 143, 0.4)' }}
+                whileTap={{ scale: 0.95 }}
+                className="inline-block px-8 py-4 md:px-10 md:py-5 bg-gradient-to-r from-[#4F9C8F] to-[#3D8B7F] text-white rounded-full text-sm md:text-lg font-bold font-inter shadow-2xl pointer-events-auto tracking-widest uppercase"
+              >
+                Explore Collection ↓
+              </motion.a>
+            </div>
           </motion.div>
         </div>
 
         {/* Scroll Indicator */}
         <motion.div
           style={{ opacity: scrollIndicatorOpacity }}
-          className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pointer-events-none"
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none"
         >
-          <p className="text-[#C9B8A0]/60 text-[10px] md:text-xs font-inter tracking-[0.25em] uppercase">
-            Scroll to Explore
-          </p>
-          <motion.div
-            animate={{ y: [0, 8, 0] }}
+          <motion.span
+            animate={{ y: [0, 5, 0] }}
             transition={{ repeat: Infinity, duration: 1.5 }}
-            className="w-6 h-10 border border-[#C9B8A0]/30 rounded-full flex items-start justify-center p-2"
+            className="text-[#4F9C8F] text-2xl"
           >
-            <div className="w-1.5 h-2.5 bg-[#4F9C8F] rounded-full" />
-          </motion.div>
+            ↓
+          </motion.span>
         </motion.div>
       </div>
     </div>
