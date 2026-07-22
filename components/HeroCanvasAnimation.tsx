@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, useState } from 'react';
 import { motion, useScroll, useTransform, useSpring, useVelocity } from 'framer-motion';
+import { ChevronDown } from 'lucide-react';
 
 // Particle classes for the procedural canvas engine
 
@@ -133,70 +134,25 @@ class SparkParticle {
   }
 }
 
-interface FloatingBean {
-  xPct: number;
-  yPct: number;
-  depth: number;      // 0.2 to 1.2 (for parallax layering)
-  rotation: number;
-  rotSpeed: number;
-  bobOffset: number;
-  bobSpeed: number;
-  bobRange: number;
-}
-
-
-// Helper to tint an image with a specific color on an offscreen canvas
-const createTintedCanvas = (img: HTMLImageElement, color: string, alpha: number = 0.5): HTMLCanvasElement | HTMLImageElement => {
-  if (!img || img.width === 0 || img.height === 0) {
-    return img;
-  }
-  
-  const canvas = document.createElement('canvas');
-  canvas.width = img.width;
-  canvas.height = img.height;
-  const ctx = canvas.getContext('2d');
-  if (ctx) {
-    // 1. Draw the original transparent image
-    ctx.drawImage(img, 0, 0);
-    
-    // 2. Parse hex color to rgb
-    const r = parseInt(color.slice(1, 3), 16);
-    const g = parseInt(color.slice(3, 5), 16);
-    const b = parseInt(color.slice(5, 7), 16);
-    
-    try {
-      // 3. Extract pixel data
-      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const data = imgData.data;
-      
-      // 4. Tint opaque pixels (preserving the exact alpha channel)
-      for (let i = 0; i < data.length; i += 4) {
-        const pixelAlpha = data[i + 3];
-        if (pixelAlpha > 0) {
-          data[i] = Math.round(data[i] * (1 - alpha) + r * alpha);     // Red
-          data[i + 1] = Math.round(data[i + 1] * (1 - alpha) + g * alpha); // Green
-          data[i + 2] = Math.round(data[i + 2] * (1 - alpha) + b * alpha); // Blue
-        }
-      }
-      
-      // 5. Write pixel data back
-      ctx.putImageData(imgData, 0, 0);
-    } catch (e) {
-      console.warn("Tinting failed due to security/sandbox context. Falling back to untinted image.", e);
-    }
-  }
-  return canvas;
-};
-
 export default function HeroCanvasAnimation() {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [targetElement, setTargetElement] = useState<HTMLElement | null>(null);
+  const [cafeBg, setCafeBg] = useState<HTMLImageElement | null>(null);
 
   useEffect(() => {
     if (containerRef.current) {
       setTargetElement(containerRef.current);
     }
+  }, []);
+
+  // Preload background café ambiance image
+  useEffect(() => {
+    const img = new Image();
+    img.src = '/cup_cafe.jpg';
+    img.onload = () => {
+      setCafeBg(img);
+    };
   }, []);
 
   // Smooth scroll-driven parallax hooks
@@ -278,18 +234,36 @@ export default function HeroCanvasAnimation() {
       const mouseOffsetY = currentMouseY * 35;
       const scrollOffsetY = scrollVal * -60;
 
-      // Vignette effect to blend background seamlessly with deep espresso #1A0F0A
+      // 1. Draw atmospheric café background image
+      if (cafeBg) {
+        ctx.save();
+        const scale = Math.max(canvas.width / cafeBg.width, canvas.height / cafeBg.height) * 1.05;
+        const w = cafeBg.width * scale;
+        const h = cafeBg.height * scale;
+        const x = (canvas.width - w) / 2 + mouseOffsetX * 0.3;
+        const y = (canvas.height - h) / 2 + mouseOffsetY * 0.3 + scrollOffsetY * 0.2;
+        ctx.drawImage(cafeBg, x, y, w, h);
+        ctx.restore();
+      }
+
+      // 2. Dark overlay filter for optimal text contrast & moody coffee house warmth
+      ctx.save();
+      ctx.fillStyle = 'rgba(26, 15, 10, 0.65)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.restore();
+
+      // 3. Vignette gradient to blend edges smoothly into deep espresso #1A0F0A
       ctx.save();
       const vignetteGrad = ctx.createRadialGradient(
         canvas.width / 2,
         canvas.height / 2,
-        Math.min(canvas.width, canvas.height) * 0.25,
+        Math.min(canvas.width, canvas.height) * 0.2,
         canvas.width / 2,
         canvas.height / 2,
-        Math.max(canvas.width, canvas.height) * 0.7
+        Math.max(canvas.width, canvas.height) * 0.75
       );
-      vignetteGrad.addColorStop(0, 'rgba(26, 15, 10, 0)');
-      vignetteGrad.addColorStop(0.5, 'rgba(26, 15, 10, 0.45)');
+      vignetteGrad.addColorStop(0, 'rgba(26, 15, 10, 0.25)');
+      vignetteGrad.addColorStop(0.6, 'rgba(26, 15, 10, 0.65)');
       vignetteGrad.addColorStop(1, '#1A0F0A');
       
       ctx.fillStyle = vignetteGrad;
@@ -300,7 +274,7 @@ export default function HeroCanvasAnimation() {
       const emitterX = canvas.width / 2 + mouseOffsetX;
       const emitterY = canvas.height * 0.55 + mouseOffsetY + scrollOffsetY;
 
-      // 1. Spawn & Draw Steam Particles
+      // 4. Spawn & Draw Steam Particles
       const spawnSteamInterval = Math.max(2, Math.round(6 - Math.abs(scrollVelVal) * 50));
       if (time % spawnSteamInterval === 0 && steamParticles.length < 80) {
         steamParticles.push(new SteamParticle(emitterX, emitterY, scrollVelVal));
@@ -316,7 +290,7 @@ export default function HeroCanvasAnimation() {
         }
       }
 
-      // 2. Spawn & Draw Aroma Bokeh Sparks
+      // 5. Spawn & Draw Aroma Bokeh Sparks
       const spawnSparkInterval = Math.max(1, Math.round(4 - Math.abs(scrollVelVal) * 35));
       if (time % spawnSparkInterval === 0 && sparkParticles.length < 120) {
         const startX = Math.random() > 0.4 ? emitterX + (Math.random() * 40 - 20) : Math.random() * canvas.width;
@@ -345,7 +319,7 @@ export default function HeroCanvasAnimation() {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('resize', resizeCanvas);
     };
-  }, [smoothProgress, scrollVelocity]);
+  }, [cafeBg, smoothProgress, scrollVelocity]);
 
   // Section text opacity calculations (synced with scrolling progress)
   const section1Opacity = useTransform(smoothProgress, [0, 0.08, 0.18, 0.24], [1, 1, 1, 0]);
@@ -364,24 +338,33 @@ export default function HeroCanvasAnimation() {
           
           {/* Section 1 */}
           <motion.div style={{ opacity: section1Opacity }} className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center">
-            <div className="max-w-3xl">
-              <span className="text-[#4F9C8F] font-bold tracking-[0.3em] uppercase text-xs md:text-sm block mb-3 font-inter">
+            <div className="max-w-3xl flex flex-col items-center">
+              <span className="text-[#4F9C8F] font-bold tracking-[0.3em] uppercase text-xs md:text-sm block mb-4 font-inter">
                 BREWHAUS · EST. 2014
               </span>
-              <h1 className="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-playfair font-bold text-amber-50/95 tracking-tighter leading-none drop-shadow-[0_0_25px_rgba(253,251,235,0.35)] flex flex-col items-center">
+              <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-playfair font-normal text-[#F5E6D3] tracking-tight leading-none flex flex-col items-center mb-6 drop-shadow-md">
                 <span>Experience</span>
-                <span className="italic font-playfair font-normal text-coffee-accent mt-2">Coffee</span>
+                <span className="italic font-playfair font-normal text-[#4F9C8F] mt-1">Coffee</span>
               </h1>
-              <p className="text-sm sm:text-base md:text-xl text-[#C9B8A0] font-inter max-w-xl mx-auto font-light leading-relaxed mt-6">
-                Where each bean tells a story and every sip is a quiet ritual. Discover blends crafted by master baristas.
+              <p className="text-sm sm:text-base md:text-lg text-[#C9B8A0] font-inter max-w-xl mx-auto font-light leading-relaxed mb-8">
+                Where each bean tells a story and every sip is a quiet ritual.<br className="hidden sm:inline" />
+                {' '}Discover blends crafted by master baristas.
               </p>
-              <div className="mt-8 pointer-events-auto">
+              <div className="pointer-events-auto flex flex-col items-center gap-3">
                 <a
                   href="#blends"
-                  className="inline-block px-8 py-3.5 bg-coffee-accent text-coffee-espresso rounded-full text-xs md:text-sm font-bold font-inter tracking-widest uppercase hover:scale-105 active:scale-95 transition-transform duration-300 shadow-lg shadow-coffee-accent/20 hover:shadow-coffee-accent/40"
+                  className="inline-block px-8 py-3.5 bg-[#4F9C8F] text-[#1A0F0A] rounded-full text-xs md:text-sm font-bold font-inter tracking-widest uppercase hover:bg-[#3D8B7F] hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg shadow-[#4F9C8F]/25"
                 >
                   Discover Blends
                 </a>
+                <motion.a
+                  href="#blends"
+                  animate={{ y: [0, 6, 0] }}
+                  transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
+                  className="text-[#4F9C8F] hover:text-[#3D8B7F] transition-colors mt-2"
+                >
+                  <ChevronDown className="w-6 h-6" />
+                </motion.a>
               </div>
             </div>
           </motion.div>
