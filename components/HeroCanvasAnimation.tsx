@@ -191,27 +191,14 @@ const createTintedCanvas = (img: HTMLImageElement, color: string, alpha: number 
 export default function HeroCanvasAnimation() {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  
-  const [assets, setAssets] = useState<{
-    studioImg: HTMLImageElement | null;
-    cafeImg: HTMLImageElement | null;
-    beanImg: HTMLImageElement | HTMLCanvasElement | null;
-    frames: HTMLImageElement[];
-    useFramesFallback: boolean;
-  }>({ studioImg: null, cafeImg: null, beanImg: null, frames: [], useFramesFallback: true });
-  
-  const [assetsLoaded, setAssetsLoaded] = useState(false);
-  const [loadProgress, setLoadProgress] = useState(0);
- 
-  // Track mount state to avoid useScroll target hydration runtime errors
   const [targetElement, setTargetElement] = useState<HTMLElement | null>(null);
- 
+
   useEffect(() => {
     if (containerRef.current) {
       setTargetElement(containerRef.current);
     }
   }, []);
- 
+
   // Smooth scroll-driven parallax hooks
   const { scrollYProgress } = useScroll({
     target: targetElement ? containerRef : undefined,
@@ -229,102 +216,10 @@ export default function HeroCanvasAnimation() {
     damping: 30
   });
 
-  const TOTAL_FRAMES = 120;
-
-  // Preload primary design assets and animation frames
-  useEffect(() => {
-    const baseAssetsToLoad = [
-      { key: 'studioImg', src: '/cup_studio.png' },
-      { key: 'cafeImg', src: '/cup_cafe.jpg' },
-      { key: 'beanImg', src: '/coffee/bean.png' }
-    ];
- 
-    let baseLoaded = 0;
-    const tempBase: any = {};
- 
-    const frameElements: HTMLImageElement[] = [];
-    let framesLoadedCount = 0;
-    let framesFailed = false;
-    let isFinished = false; // Flag to prevent multiple state updates
- 
-    const resolveBaseAssets = () => {
-      const loadedBeanImg = tempBase.beanImg;
-      // Apply #D4A574 tint to floating coffee bean particles
-      const tintedBean = loadedBeanImg ? createTintedCanvas(loadedBeanImg, '#D4A574', 0.45) : null;
- 
-      // Set baseline assets immediately so page mounts fast
-      setAssets({
-        studioImg: tempBase.studioImg,
-        cafeImg: tempBase.cafeImg,
-        beanImg: tintedBean,
-        frames: [],
-        useFramesFallback: true
-      });
-      setAssetsLoaded(true);
- 
-      // Start loading frames in background after baseline resolves
-      preloadFrames();
-    };
- 
-    const preloadFrames = () => {
-      // Load frame sequences: frame_0.webp to frame_119.webp
-      for (let i = 0; i < TOTAL_FRAMES; i++) {
-        const img = new Image();
-        img.src = `/frames/frame_${i}.webp`;
-        img.onload = () => {
-          if (!framesFailed) {
-            frameElements[i] = img;
-            framesLoadedCount++;
-            
-            if (framesLoadedCount === TOTAL_FRAMES && !isFinished) {
-              isFinished = true;
-              setAssets(prev => ({
-                ...prev,
-                frames: frameElements,
-                useFramesFallback: false
-              }));
-            }
-          }
-        };
-        img.onerror = () => {
-          if (!framesFailed) {
-            framesFailed = true;
-            console.warn("Canvas animation frame sequences not found or incomplete. Keeping smooth cross-fade fallback.");
-          }
-        };
-      }
-    };
- 
-    // Load baseline images
-    baseAssetsToLoad.forEach((asset) => {
-      const img = new Image();
-      img.src = asset.src;
-      img.onload = () => {
-        tempBase[asset.key] = img;
-        baseLoaded++;
-        setLoadProgress((baseLoaded / baseAssetsToLoad.length) * 100);
-        if (baseLoaded === baseAssetsToLoad.length) {
-          resolveBaseAssets();
-        }
-      };
-      img.onerror = () => {
-        console.error(`Failed to load baseline asset: ${asset.src}`);
-        baseLoaded++;
-        setLoadProgress((baseLoaded / baseAssetsToLoad.length) * 100);
-        if (baseLoaded === baseAssetsToLoad.length) {
-          resolveBaseAssets();
-        }
-      };
-    });
-  }, []);
-
   // Main canvas animation logic
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!assetsLoaded || !canvas || !assets.studioImg || !assets.cafeImg || !assets.beanImg) return;
-
-    const { studioImg, cafeImg, beanImg, frames, useFramesFallback } = assets;
-    if (!studioImg || !cafeImg || !beanImg) return;
+    if (!canvas) return;
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
@@ -342,10 +237,6 @@ export default function HeroCanvasAnimation() {
     const steamParticles: SteamParticle[] = [];
     const sparkParticles: SparkParticle[] = [];
 
-
-
-
-
     // Mouse position event tracker
     const handleMouseMove = (e: MouseEvent) => {
       targetMouseX = (e.clientX / window.innerWidth) - 0.5; // -0.5 to 0.5
@@ -360,10 +251,6 @@ export default function HeroCanvasAnimation() {
     };
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
-
-    // Spring physics vertical floating simulation constants
-    let cupYOffset = 0;
-    let cupYVelocity = 0;
 
     // Animation Loop
     const loop = () => {
@@ -387,55 +274,11 @@ export default function HeroCanvasAnimation() {
       currentMouseY += (targetMouseY - currentMouseY) * 0.05;
 
       // Parallax configurations
-      const zoomFactor = 1.02 + scrollVal * 0.08;
       const mouseOffsetX = currentMouseX * 35;
       const mouseOffsetY = currentMouseY * 35;
       const scrollOffsetY = scrollVal * -60;
 
-      // Anti-gravity float: spring-mass system driven by scroll velocity and bobbing motion
-      const targetCupY = scrollVelVal * -280 + Math.sin(time * 0.035) * 15;
-      const cupForce = (targetCupY - cupYOffset) * 0.08; // spring tension constant
-      cupYVelocity += cupForce;
-      cupYVelocity *= 0.88; // damping factor
-      cupYOffset += cupYVelocity;
-
-      // Helper: Draw an image center with scroll, parallax, and anti-gravity vertical spring adjustments
-      const drawImageCenter = (img: HTMLImageElement | HTMLCanvasElement, alpha: number) => {
-        if (alpha <= 0) return;
-        ctx.save();
-        ctx.globalAlpha = alpha;
- 
-        // Base Contain calculations with mobile scale optimization
-        const isMobile = canvas.width < 768;
-        const mobileScaleMultiplier = isMobile ? 1.35 : 1.0;
-        const scale = Math.min(canvas.width / img.width, canvas.height / img.height) * zoomFactor * mobileScaleMultiplier;
-        const w = img.width * scale;
-        const h = img.height * scale;
-        
-        // Centered coordinates + mouse parallax + scroll offsets + vertical spring offset
-        const x = (canvas.width - w) / 2 + mouseOffsetX;
-        const y = (canvas.height - h) / 2 + mouseOffsetY + scrollOffsetY + cupYOffset;
- 
-        ctx.drawImage(img, x, y, w, h);
-        ctx.restore();
-      };
-
-      if (!useFramesFallback && frames.length === TOTAL_FRAMES) {
-        // Frame-by-frame mode: Map scrollProgress (0 to 1) to active frame index (0 to 119)
-        const frameIndex = Math.min(TOTAL_FRAMES - 1, Math.floor(scrollVal * TOTAL_FRAMES));
-        const activeFrame = frames[frameIndex];
-        if (activeFrame) {
-          drawImageCenter(activeFrame, 1.0);
-        }
-      } else {
-        // Fallback scene cross-fade mode
-        const studioOpacity = Math.max(0, Math.min(1, 1 - (scrollVal - 0.2) / 0.5));
-        const cafeOpacity = Math.max(0, Math.min(1, (scrollVal - 0.2) / 0.5));
-        drawImageCenter(cafeImg, cafeOpacity);
-        drawImageCenter(studioImg, studioOpacity);
-      }
-
-      // Vignette effect to blend background images seamlessly with the deep espresso #1A0F0A background
+      // Vignette effect to blend background seamlessly with deep espresso #1A0F0A
       ctx.save();
       const vignetteGrad = ctx.createRadialGradient(
         canvas.width / 2,
@@ -453,20 +296,11 @@ export default function HeroCanvasAnimation() {
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.restore();
 
-
-
-
-
-      // Emitter details: Positioned right above the cup on canvas (linked with cup's vertical float and responsive scaling)
-      const isMobile = canvas.width < 768;
-      const mobileScaleMultiplier = isMobile ? 1.35 : 1.0;
-      const baseScale = Math.min(canvas.width / (studioImg?.width || 1920), canvas.height / (studioImg?.height || 1080)) * zoomFactor * mobileScaleMultiplier;
-      const cupH = (studioImg?.height || 1080) * baseScale;
-      const cupTopY = (canvas.height - cupH) / 2 + mouseOffsetY + scrollOffsetY + cupYOffset;
+      // Emitter position for ambient steam & sparks
       const emitterX = canvas.width / 2 + mouseOffsetX;
-      const emitterY = cupTopY + cupH * 0.64;
+      const emitterY = canvas.height * 0.55 + mouseOffsetY + scrollOffsetY;
 
-      // 2. Spawn & Draw Steam Particles
+      // 1. Spawn & Draw Steam Particles
       const spawnSteamInterval = Math.max(2, Math.round(6 - Math.abs(scrollVelVal) * 50));
       if (time % spawnSteamInterval === 0 && steamParticles.length < 80) {
         steamParticles.push(new SteamParticle(emitterX, emitterY, scrollVelVal));
@@ -482,7 +316,7 @@ export default function HeroCanvasAnimation() {
         }
       }
 
-      // 3. Spawn & Draw Aroma Bokeh Sparks
+      // 2. Spawn & Draw Aroma Bokeh Sparks
       const spawnSparkInterval = Math.max(1, Math.round(4 - Math.abs(scrollVelVal) * 35));
       if (time % spawnSparkInterval === 0 && sparkParticles.length < 120) {
         const startX = Math.random() > 0.4 ? emitterX + (Math.random() * 40 - 20) : Math.random() * canvas.width;
@@ -500,10 +334,6 @@ export default function HeroCanvasAnimation() {
         }
       }
 
-
-
-
-
       // Trigger next frame
       animationFrameId = requestAnimationFrame(loop);
     };
@@ -515,7 +345,7 @@ export default function HeroCanvasAnimation() {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('resize', resizeCanvas);
     };
-  }, [assetsLoaded, assets, smoothProgress, scrollVelocity]);
+  }, [smoothProgress, scrollVelocity]);
 
   // Section text opacity calculations (synced with scrolling progress)
   const section1Opacity = useTransform(smoothProgress, [0, 0.08, 0.18, 0.24], [1, 1, 1, 0]);
@@ -523,24 +353,6 @@ export default function HeroCanvasAnimation() {
   const section3Opacity = useTransform(smoothProgress, [0.58, 0.64, 0.78, 0.84], [0, 1, 1, 0]);
   const section4Opacity = useTransform(smoothProgress, [0.88, 0.93, 0.98, 1.0], [0, 1, 1, 0]);
   const scrollIndicatorOpacity = useTransform(smoothProgress, [0, 0.08], [1, 0]);
-
-  if (!assetsLoaded) {
-    return (
-      <div className="fixed inset-0 bg-[#1A0F0A] flex flex-col items-center justify-center z-50">
-        <div className="w-64 h-2 bg-[#5A4034]/30 rounded-full overflow-hidden mb-4 border border-[#5A4034]/50">
-          <motion.div
-            className="h-full bg-gradient-to-r from-[#D4A574] to-[#4F9C8F]"
-            initial={{ width: '0%' }}
-            animate={{ width: `${loadProgress}%` }}
-            transition={{ duration: 0.2 }}
-          />
-        </div>
-        <p className="text-[#F5E6D3]/70 text-lg font-inter tracking-wider">
-          Brewing Experience... {Math.round(loadProgress)}%
-        </p>
-      </div>
-    );
-  }
 
   return (
     <div id="hero" ref={containerRef} className="relative h-[500vh]">
