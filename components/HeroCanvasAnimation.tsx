@@ -128,7 +128,6 @@ export default function HeroCanvasAnimation() {
 
     // Particle arrays
     const steamParticles: SteamParticle[] = [];
-    const sparkParticles: SparkParticle[] = [];
 
     // Mouse position event tracker
     const handleMouseMove = (e: MouseEvent) => {
