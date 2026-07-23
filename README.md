@@ -1,4 +1,4 @@
-# ☕ L'AROMA — 3D Scroll-Driven Coffee Experience
+# ☕ BREWHAUS — 3D Scroll-Driven Coffee Experience
 
 An immersive, premium 3D web experience built with **Next.js 14**, **Tailwind CSS**, and **Framer Motion**, powered by a high-performance **HTML5 Canvas** particle engine. 
 
@@ -14,8 +14,8 @@ The website delivers a sensory digital journey through interactive scroll-trigge
     *   **3D Mouse-Parallax**: Subtly shifts perspective based on real-time mouse coordinate tracking, offering a sense of spatial depth.
 *   **💨 Procedural Particle Simulation**
     *   **Kinetic Steam Emitters**: Dual emitters simulate organic rising steam using customizable velocity, life span, and size growth factor.
-    *   **Scroll-Driven Wind/Velocity**: High-speed scrolling increases the upward kinetic force, causing the steam and aroma bokeh sparks to rise faster.
-    *   **Floating Coffee Beans & Bokeh Sparks**: Custom rendering curves draw floating 3D-esque beans and glowing orange/turquoise aroma particles that respond to scrolls.
+    *   **Scroll-Driven Wind/Velocity**: High-speed scrolling increases the upward kinetic force, causing the steam to rise faster.
+    *   **Floating Coffee Beans & Ambient Steam**: Custom rendering curves draw floating 3D-esque beans and natural coffee steam that respond to scrolls.
 *   **🛒 Artisanal Product Showcase**
     *   **The Reserve Line**: Beautiful grid layout featuring premium single-origin coffees (e.g., *Ethiopian Yirgacheffe*, *Sumatra Mandheling*) with custom card entrance animations.
     *   **Interactive Cart**: Responsive state updates with micro-animations when adding products to the selection count.

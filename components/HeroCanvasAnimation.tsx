@@ -70,69 +70,6 @@ class SteamParticle {
   }
 }
 
-class SparkParticle {
-  x: number;
-  y: number;
-  vx: number;
-  vy: number;
-  size: number;
-  color: string;
-  alpha: number;
-  life: number;
-  decay: number;
-  wobblePhase: number;
-  wobbleSpeed: number;
-
-  constructor(x: number, y: number, scrollVel: number) {
-    this.x = x;
-    this.y = y;
-    this.vx = Math.random() * 1.6 - 0.8;
-    this.vy = -(0.8 + Math.random() * 1.5) - Math.abs(scrollVel) * 15;
-    this.size = 1.2 + Math.random() * 2.5;
-
-    // Coffee-inspired glow colors: gold, orange-accent, teal-green
-    const colors = ['#D4A574', '#FFD700', '#4F9C8F', '#FF8C00'];
-    this.color = colors[Math.floor(Math.random() * colors.length)];
-
-    this.alpha = 0.5 + Math.random() * 0.5;
-    this.life = 0;
-    this.decay = 0.002 + Math.random() * 0.003;
-    this.wobblePhase = Math.random() * Math.PI * 2;
-    this.wobbleSpeed = 0.01 + Math.random() * 0.03;
-  }
-
-  update(scrollVel: number) {
-    this.life += this.decay;
-    this.wobblePhase += this.wobbleSpeed;
-
-    this.x += this.vx + Math.sin(this.wobblePhase) * 0.4 + scrollVel * 3;
-    this.y += this.vy - Math.abs(scrollVel) * 6;
-
-    // Spark pulses and fades
-    this.alpha = Math.max(0, (1 - this.life) * (0.6 + Math.sin(this.wobblePhase * 3) * 0.4));
-  }
-
-  draw(ctx: CanvasRenderingContext2D) {
-    if (this.alpha <= 0) return;
-    ctx.save();
-    
-    // Faint aura
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.size * 3, 0, Math.PI * 2);
-    ctx.fillStyle = this.color;
-    ctx.globalAlpha = this.alpha * 0.2;
-    ctx.fill();
-
-    // Bright core
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-    ctx.fillStyle = this.color;
-    ctx.globalAlpha = this.alpha;
-    ctx.fill();
-
-    ctx.restore();
-  }
-}
 
 export default function HeroCanvasAnimation() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -270,7 +207,7 @@ export default function HeroCanvasAnimation() {
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.restore();
 
-      // Emitter position for ambient steam & sparks
+      // Emitter position for ambient steam
       const emitterX = canvas.width / 2 + mouseOffsetX;
       const emitterY = canvas.height * 0.55 + mouseOffsetY + scrollOffsetY;
 
@@ -285,24 +222,6 @@ export default function HeroCanvasAnimation() {
         p.update(scrollVelVal);
         if (p.life >= 1) {
           steamParticles.splice(i, 1);
-        } else {
-          p.draw(ctx);
-        }
-      }
-
-      // 5. Spawn & Draw Aroma Bokeh Sparks
-      const spawnSparkInterval = Math.max(1, Math.round(4 - Math.abs(scrollVelVal) * 35));
-      if (time % spawnSparkInterval === 0 && sparkParticles.length < 120) {
-        const startX = Math.random() > 0.4 ? emitterX + (Math.random() * 40 - 20) : Math.random() * canvas.width;
-        const startY = Math.random() > 0.4 ? emitterY : canvas.height + 10;
-        sparkParticles.push(new SparkParticle(startX, startY, scrollVelVal));
-      }
-
-      for (let i = sparkParticles.length - 1; i >= 0; i--) {
-        const p = sparkParticles[i];
-        p.update(scrollVelVal);
-        if (p.life >= 1 || p.y < -50 || p.alpha <= 0) {
-          sparkParticles.splice(i, 1);
         } else {
           p.draw(ctx);
         }
