@@ -118,7 +118,6 @@ export default function HeroCanvasAnimation() {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [targetElement, setTargetElement] = useState<HTMLElement | null>(null);
-  const [cafeBg, setCafeBg] = useState<HTMLImageElement | null>(null);
 
   // Pour simulation state
   const pourFrameRef = useRef<number>(0);
@@ -135,15 +134,6 @@ export default function HeroCanvasAnimation() {
     if (containerRef.current) {
       setTargetElement(containerRef.current);
     }
-  }, []);
-
-  // Preload background café ambiance image
-  useEffect(() => {
-    const img = new Image();
-    img.src = '/cup_cafe.jpg';
-    img.onload = () => {
-      setCafeBg(img);
-    };
   }, []);
 
   // Smooth scroll-driven hooks
@@ -239,21 +229,20 @@ export default function HeroCanvasAnimation() {
       // Clear Screen
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // 1. Atmospheric Café Background Image
-      if (cafeBg) {
-        ctx.save();
-        const scale = Math.max(canvas.width / cafeBg.width, canvas.height / cafeBg.height) * 1.05;
-        const w = cafeBg.width * scale;
-        const h = cafeBg.height * scale;
-        const x = (canvas.width - w) / 2 + mouseOffsetX * 0.3;
-        const y = (canvas.height - h) / 2 + mouseOffsetY * 0.3 + scrollOffsetY * 0.2;
-        ctx.drawImage(cafeBg, x, y, w, h);
-        ctx.restore();
-      }
-
-      // 2. Dark Overlay Filter
+      // 1. Dark Espresso Atmospheric Canvas Base
       ctx.save();
-      ctx.fillStyle = 'rgba(20, 11, 7, 0.68)';
+      const bgGrad = ctx.createRadialGradient(
+        canvas.width / 2 + mouseOffsetX * 0.2,
+        canvas.height * 0.45 + mouseOffsetY * 0.2 + scrollOffsetY * 0.2,
+        0,
+        canvas.width / 2,
+        canvas.height / 2,
+        Math.max(canvas.width, canvas.height) * 0.75
+      );
+      bgGrad.addColorStop(0, '#26160E');
+      bgGrad.addColorStop(0.5, '#160B07');
+      bgGrad.addColorStop(1, '#0A0402');
+      ctx.fillStyle = bgGrad;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.restore();
 
@@ -695,7 +684,7 @@ export default function HeroCanvasAnimation() {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('resize', resizeCanvas);
     };
-  }, [cafeBg, smoothProgress, scrollVelocity, pourProgressState, isPouring]);
+  }, [smoothProgress, scrollVelocity, pourProgressState, isPouring]);
 
   // Section text opacity calculations (synced with scrolling progress)
   const section1Opacity = useTransform(smoothProgress, [0, 0.08, 0.18, 0.24], [1, 1, 1, 0]);
