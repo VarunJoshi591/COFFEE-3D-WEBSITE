@@ -19,7 +19,7 @@ export default function Navbar({ cartCount = 0 }: NavbarProps) {
           <Coffee className="w-5 h-5 text-coffee-text-primary group-hover:rotate-12 transition-transform duration-300" />
           <div className="absolute inset-0 rounded-full border border-coffee-accent/40 animate-ping opacity-0 group-hover:opacity-100 duration-1000" />
         </div>
-        <span className="text-xl md:text-2xl font-bold font-playfair tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-coffee-text-primary to-[#D4A574]">
+        <span className="text-xl md:text-2xl font-extrabold font-inter tracking-[0.16em] text-transparent bg-clip-text bg-gradient-to-r from-coffee-text-primary via-[#F5E6D3] to-[#D4A574]">
           BREWHAUS
         </span>
       </div>
