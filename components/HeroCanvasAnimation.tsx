@@ -723,9 +723,9 @@ export default function HeroCanvasAnimation() {
         <div className="absolute inset-0 pointer-events-none">
           
           {/* Section 1 */}
-          <motion.div style={{ opacity: section1Opacity }} className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center">
+          <motion.div style={{ opacity: section1Opacity }} className="absolute inset-0 flex flex-col items-center justify-center px-4 pt-20 md:pt-24 text-center">
             <div className="max-w-3xl flex flex-col items-center">
-              <span className="text-[#4F9C8F] font-bold tracking-[0.3em] uppercase text-xs md:text-sm block mb-4 font-inter">
+              <span className="text-[#4F9C8F] font-extrabold tracking-[0.3em] uppercase text-xs md:text-sm block mb-4 font-inter">
                 BREWHAUS · EST. 2014
               </span>
               <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-playfair font-normal text-[#F5E6D3] tracking-tight leading-none flex flex-col items-center mb-6 drop-shadow-md">
