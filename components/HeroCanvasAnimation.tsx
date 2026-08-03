@@ -34,15 +34,11 @@ class SteamParticle {
     this.wobbleSpeed = 0.012 + Math.random() * 0.02;
   }
 
-  update(scrollVel: number, mouseVelX: number = 0, mouseOffsetX: number = 0) {
+  update(scrollVel: number) {
     this.life += this.decay;
     this.wobble += this.wobbleSpeed;
 
-    // Mouse velocity and horizontal displacement influence steam draft vector
-    const mouseDraft = mouseVelX * 4.0 + mouseOffsetX * 0.14;
-    this.vx += (mouseDraft - this.vx) * 0.08;
-
-    // Drifts up and wobbles naturally with sine dynamics + dynamic airflow draft
+    // Drifts up and wobbles naturally with sine dynamics
     this.x += this.vx + Math.sin(this.wobble) * 0.6 + scrollVel * 4;
     this.y += this.vy - Math.abs(scrollVel) * 4;
 
@@ -118,144 +114,6 @@ class SplashParticle {
   }
 }
 
-// 3D Interactive Floating Coffee Bean Particle System
-class CoffeeBeanParticle {
-  x: number;
-  y: number;
-  baseNormalizedX: number;
-  baseNormalizedY: number;
-  z: number; // Parallax depth layer (0.4 to 1.6)
-  size: number;
-  rotation: number;
-  vRot: number;
-  wobbleOffset: number;
-  wobbleSpeed: number;
-
-  constructor(normalizedX: number, normalizedY: number, z: number, size: number) {
-    this.baseNormalizedX = normalizedX;
-    this.baseNormalizedY = normalizedY;
-    this.z = z;
-    this.size = size;
-    this.x = 0;
-    this.y = 0;
-    this.rotation = Math.random() * Math.PI * 2;
-    this.vRot = (Math.random() - 0.5) * 0.018;
-    this.wobbleOffset = Math.random() * Math.PI * 2;
-    this.wobbleSpeed = 0.012 + Math.random() * 0.015;
-  }
-
-  update(
-    canvasWidth: number,
-    canvasHeight: number,
-    targetMouseX: number,
-    targetMouseY: number,
-    mouseVelX: number,
-    mouseVelY: number,
-    time: number
-  ) {
-    const baseX = this.baseNormalizedX * canvasWidth;
-    const baseY = this.baseNormalizedY * canvasHeight;
-
-    // Organic floating hover sine movement
-    const floatX = Math.sin(time * 0.022 + this.wobbleOffset) * 14 * this.z;
-    const floatY = Math.cos(time * 0.026 + this.wobbleOffset) * 18 * this.z;
-
-    // Parallax & Mouse follow magnetic physics offset
-    const mouseAttractX = targetMouseX * canvasWidth * 0.22 * (this.z * 1.3);
-    const mouseAttractY = targetMouseY * canvasHeight * 0.22 * (this.z * 1.3);
-
-    // Mouse velocity dynamic momentum thrust
-    const velocityAttractX = mouseVelX * 140 * (this.z * 0.9);
-    const velocityAttractY = mouseVelY * 140 * (this.z * 0.9);
-
-    const targetX = baseX + floatX + mouseAttractX + velocityAttractX;
-    const targetY = baseY + floatY + mouseAttractY + velocityAttractY;
-
-    if (this.x === 0 && this.y === 0) {
-      this.x = targetX;
-      this.y = targetY;
-    } else {
-      this.x += (targetX - this.x) * 0.07;
-      this.y += (targetY - this.y) * 0.07;
-    }
-
-    // Spin speed reacts dynamically to cursor motion speed
-    const mouseSpeed = Math.hypot(mouseVelX, mouseVelY);
-    this.rotation += this.vRot + mouseSpeed * 0.08 * (this.z > 1 ? 1 : -1);
-  }
-
-  draw(ctx: CanvasRenderingContext2D, lightOffsetX: number, lightOffsetY: number) {
-    ctx.save();
-
-    // Dynamic 3D Drop Shadow underneath coffee bean
-    const shadowX = this.x + lightOffsetX * 0.5 * this.z;
-    const shadowY = this.y + 14 * this.z + lightOffsetY * 0.5 * this.z;
-
-    ctx.save();
-    ctx.translate(shadowX, shadowY);
-    ctx.rotate(this.rotation);
-    ctx.beginPath();
-    ctx.ellipse(0, 0, this.size * 1.08, this.size * 0.65, 0, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(0, 0, 0, ${Math.min(0.5, 0.28 * this.z)})`;
-    ctx.filter = `blur(${Math.max(3, 7 * this.z)}px)`;
-    ctx.fill();
-    ctx.restore();
-
-    // Render Roasted Coffee Bean Body
-    ctx.translate(this.x, this.y);
-    ctx.rotate(this.rotation);
-
-    // Outer Bean Contour
-    ctx.beginPath();
-    ctx.ellipse(0, 0, this.size, this.size * 0.62, 0, 0, Math.PI * 2);
-
-    const beanGrad = ctx.createLinearGradient(-this.size, -this.size * 0.6, this.size, this.size * 0.6);
-    beanGrad.addColorStop(0, '#5A341F'); // Highlighted roasted curve
-    beanGrad.addColorStop(0.35, '#391D10'); // Rich espresso body
-    beanGrad.addColorStop(0.75, '#200F07'); // Deep roast shadow
-    beanGrad.addColorStop(1, '#110603'); // Dark shadow border
-    ctx.fillStyle = beanGrad;
-    ctx.fill();
-
-    ctx.strokeStyle = 'rgba(212, 165, 116, 0.3)';
-    ctx.lineWidth = 1;
-    ctx.stroke();
-
-    // Center Curved Crease (Iconic Coffee Bean Groove)
-    ctx.beginPath();
-    ctx.moveTo(-this.size * 0.78, 0);
-    ctx.bezierCurveTo(
-      -this.size * 0.25, -this.size * 0.22,
-      this.size * 0.25, this.size * 0.22,
-      this.size * 0.78, 0
-    );
-    ctx.strokeStyle = '#0B0402';
-    ctx.lineWidth = Math.max(1.5, this.size * 0.16);
-    ctx.lineCap = 'round';
-    ctx.stroke();
-
-    // Inner Crema Groove Accent Line
-    ctx.beginPath();
-    ctx.moveTo(-this.size * 0.65, -this.size * 0.04);
-    ctx.bezierCurveTo(
-      -this.size * 0.2, -this.size * 0.24,
-      this.size * 0.2, this.size * 0.2,
-      this.size * 0.65, 0.04
-    );
-    ctx.strokeStyle = 'rgba(212, 165, 116, 0.4)';
-    ctx.lineWidth = Math.max(0.8, this.size * 0.06);
-    ctx.stroke();
-
-    // Top Gloss Highlight
-    ctx.beginPath();
-    ctx.ellipse(0, -this.size * 0.22, this.size * 0.65, this.size * 0.2, 0, Math.PI, 0, true);
-    ctx.fillStyle = 'rgba(255, 235, 215, 0.16)';
-    ctx.fill();
-
-    ctx.restore();
-  }
-}
-
 export default function HeroCanvasAnimation() {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -306,35 +164,15 @@ export default function HeroCanvasAnimation() {
     let animationFrameId: number;
     let time = 0;
 
-    // Mouse coordinates & velocity configuration
+    // Mouse coordinates configuration
     let targetMouseX = 0;
     let targetMouseY = 0;
     let currentMouseX = 0;
     let currentMouseY = 0;
-    let lastMouseX = 0;
-    let lastMouseY = 0;
-    let mouseVelX = 0;
-    let mouseVelY = 0;
 
     // Particle arrays
     const steamParticles: SteamParticle[] = [];
     const splashParticles: SplashParticle[] = [];
-
-    // Interactive floating coffee beans array
-    const coffeeBeans: CoffeeBeanParticle[] = [
-      new CoffeeBeanParticle(0.12, 0.22, 0.6, 16),
-      new CoffeeBeanParticle(0.85, 0.18, 0.8, 18),
-      new CoffeeBeanParticle(0.08, 0.65, 1.4, 26),
-      new CoffeeBeanParticle(0.88, 0.72, 1.3, 24),
-      new CoffeeBeanParticle(0.22, 0.82, 0.7, 17),
-      new CoffeeBeanParticle(0.78, 0.35, 0.5, 14),
-      new CoffeeBeanParticle(0.15, 0.42, 0.9, 20),
-      new CoffeeBeanParticle(0.82, 0.55, 1.1, 22),
-      new CoffeeBeanParticle(0.30, 0.14, 0.5, 15),
-      new CoffeeBeanParticle(0.68, 0.85, 0.75, 19),
-      new CoffeeBeanParticle(0.05, 0.35, 1.2, 25),
-      new CoffeeBeanParticle(0.92, 0.38, 1.5, 27)
-    ];
 
     // Mouse position tracker
     const handleMouseMove = (e: MouseEvent) => {
@@ -380,29 +218,13 @@ export default function HeroCanvasAnimation() {
 
       const rawProgress = Math.min(1.0, pourFrameRef.current / TOTAL_POUR_FRAMES);
 
-      // Compute mouse velocity
-      const rawMouseVelX = targetMouseX - lastMouseX;
-      const rawMouseVelY = targetMouseY - lastMouseY;
-      lastMouseX = targetMouseX;
-      lastMouseY = targetMouseY;
+      // Smooth mouse easing
+      currentMouseX += (targetMouseX - currentMouseX) * 0.05;
+      currentMouseY += (targetMouseY - currentMouseY) * 0.05;
 
-      mouseVelX += (rawMouseVelX - mouseVelX) * 0.25;
-      mouseVelY += (rawMouseVelY - mouseVelY) * 0.25;
-
-      // Smooth mouse position easing
-      currentMouseX += (targetMouseX - currentMouseX) * 0.06;
-      currentMouseY += (targetMouseY - currentMouseY) * 0.06;
-
-      const mouseOffsetX = currentMouseX * 45;
-      const mouseOffsetY = currentMouseY * 45;
+      const mouseOffsetX = currentMouseX * 35;
+      const mouseOffsetY = currentMouseY * 35;
       const scrollOffsetY = scrollVal * -60;
-
-      // Dynamic 3D Light Shadow offsets
-      const shadowOffsetX = -currentMouseX * 50;
-      const shadowOffsetY = -currentMouseY * 30;
-
-      // Smooth 3D Cup Rotation angle (~8 degrees max tilt)
-      const cupRotationAngle = currentMouseX * 0.14;
 
       // Clear Screen
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -442,14 +264,6 @@ export default function HeroCanvasAnimation() {
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.restore();
 
-      // Update & Draw Background Coffee Beans (Depth z <= 1.0)
-      for (const bean of coffeeBeans) {
-        bean.update(canvas.width, canvas.height, currentMouseX, currentMouseY, mouseVelX, mouseVelY, time);
-        if (bean.z <= 1.0) {
-          bean.draw(ctx, shadowOffsetX, shadowOffsetY);
-        }
-      }
-
       // CUP & POURING ENGINE CALCULATIONS
       const cupCenterX = canvas.width / 2 + mouseOffsetX;
       const cupCenterY = canvas.height * 0.56 + mouseOffsetY + scrollOffsetY;
@@ -460,33 +274,22 @@ export default function HeroCanvasAnimation() {
       const cupHeight = cupRadiusX * 1.25;
 
       // Fill progress (0.0 to 1.0)
-      const fillLevel = Math.min(1.0, rawProgress * 1.12);
+      // Phase 1 (0 to 0.48): Espresso pour fills cup to 50%
+      // Phase 2 (0.48 to 0.90): Milk pour fills cup to 100% & blooms Latte Art
+      // Phase 3 (0.90 to 1.0): Finish pour
+      const fillLevel = Math.min(1.0, rawProgress * 1.12); // reaches 1.0 around frame 285
 
       const liquidSurfaceY = (cupCenterY + cupHeight * 0.38) - fillLevel * (cupHeight * 0.76);
       const liquidRadiusX = cupRadiusX * (0.8 + 0.18 * fillLevel);
       const liquidRadiusY = cupRadiusY * (0.8 + 0.18 * fillLevel);
 
-      // --- ROTATE CUP & SAUCER & LIQUID & STREAM LAYER TOGETHER ---
-      ctx.save();
-      ctx.translate(cupCenterX, cupCenterY);
-      ctx.rotate(cupRotationAngle);
-      ctx.translate(-cupCenterX, -cupCenterY);
-
       // --- DRAW SAUCER SHADOW & SAUCER ---
       ctx.save();
-      // Dynamic Shadow shifting relative to mouse light offset
+      // Shadow
       ctx.beginPath();
-      ctx.ellipse(
-        cupCenterX + shadowOffsetX * 0.7,
-        cupCenterY + cupHeight * 0.5 + 18 + shadowOffsetY * 0.5,
-        cupRadiusX * 1.48,
-        cupRadiusY * 1.22,
-        0,
-        0,
-        Math.PI * 2
-      );
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
-      ctx.filter = 'blur(14px)';
+      ctx.ellipse(cupCenterX, cupCenterY + cupHeight * 0.5 + 18, cupRadiusX * 1.45, cupRadiusY * 1.2, 0, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
+      ctx.filter = 'blur(12px)';
       ctx.fill();
       ctx.filter = 'none';
 
@@ -522,13 +325,17 @@ export default function HeroCanvasAnimation() {
       ctx.save();
       // Outer Cup Silhouette Path
       ctx.beginPath();
+      // Rim top arc
       ctx.ellipse(cupCenterX, cupCenterY - cupHeight * 0.38, cupRadiusX, cupRadiusY, 0, Math.PI, 0, true);
+      // Right side curve down to base
       ctx.bezierCurveTo(
         cupCenterX + cupRadiusX * 0.98, cupCenterY + cupHeight * 0.1,
         cupCenterX + cupRadiusX * 0.85, cupCenterY + cupHeight * 0.48,
         cupCenterX + cupRadiusX * 0.7, cupCenterY + cupHeight * 0.48
       );
+      // Base bottom arc
       ctx.ellipse(cupCenterX, cupCenterY + cupHeight * 0.48, cupRadiusX * 0.7, cupRadiusY * 0.7, 0, 0, Math.PI, false);
+      // Left side curve up to rim
       ctx.bezierCurveTo(
         cupCenterX - cupRadiusX * 0.85, cupCenterY + cupHeight * 0.48,
         cupCenterX - cupRadiusX * 0.98, cupCenterY + cupHeight * 0.1,
@@ -583,11 +390,13 @@ export default function HeroCanvasAnimation() {
 
       // --- RENDER RISING LIQUID & LATTE ART ---
       if (fillLevel > 0.01) {
+        // Liquid Base Fill Geometry (from bottom of cup up to liquidSurfaceY)
         ctx.save();
         ctx.beginPath();
         ctx.ellipse(cupCenterX, liquidSurfaceY, liquidRadiusX, liquidRadiusY, 0, 0, Math.PI * 2);
         ctx.rect(cupCenterX - liquidRadiusX * 1.2, liquidSurfaceY, liquidRadiusX * 2.4, cupCenterY + cupHeight - liquidSurfaceY);
         
+        // Deep Espresso Liquid Body Gradient
         const liquidBodyGrad = ctx.createLinearGradient(0, liquidSurfaceY, 0, cupCenterY + cupHeight);
         liquidBodyGrad.addColorStop(0, '#4A2818');
         liquidBodyGrad.addColorStop(0.4, '#2E170C');
@@ -601,6 +410,7 @@ export default function HeroCanvasAnimation() {
         ctx.beginPath();
         ctx.ellipse(cupCenterX, liquidSurfaceY, liquidRadiusX, liquidRadiusY, 0, 0, Math.PI * 2);
         
+        // Espresso Surface Base with Crema Gradient
         const surfaceGrad = ctx.createRadialGradient(
           cupCenterX, liquidSurfaceY, 0,
           cupCenterX, liquidSurfaceY, liquidRadiusX
@@ -611,35 +421,40 @@ export default function HeroCanvasAnimation() {
         surfaceGrad.addColorStop(1, '#190A04');
         ctx.fillStyle = surfaceGrad;
         ctx.fill();
-        ctx.clip();
+        ctx.clip(); // Clip Latte Art to liquid top surface!
 
-        // LATTE ART BLOOM SIMULATION
+        // LATTE ART BLOOM SIMULATION (Phase 2: rawProgress from 0.40 to 1.0)
         const artProgress = Math.max(0, Math.min(1.0, (rawProgress - 0.40) / 0.50));
 
         if (artProgress > 0.01) {
           ctx.save();
+          // Gentle rotation & wobble as pour finishes
           const swirlAngle = (1 - artProgress) * 0.35 + Math.sin(time * 0.02) * 0.03;
           ctx.translate(cupCenterX, liquidSurfaceY);
           ctx.rotate(swirlAngle);
-          ctx.scale(1, liquidRadiusY / liquidRadiusX);
+          ctx.scale(1, liquidRadiusY / liquidRadiusX); // Scale to match 3D surface perspective
 
           const maxScale = liquidRadiusX * 0.78 * Math.pow(artProgress, 0.7);
 
+          // Golden Crema Ring around Latte Art
           ctx.beginPath();
           ctx.arc(0, 0, maxScale * 1.08, 0, Math.PI * 2);
           ctx.fillStyle = 'rgba(212, 165, 116, 0.45)';
           ctx.fill();
 
+          // Outer Milk Foam Halo
           ctx.beginPath();
           ctx.arc(0, 0, maxScale, 0, Math.PI * 2);
           ctx.fillStyle = 'rgba(255, 253, 249, 0.92)';
           ctx.fill();
 
+          // Inner Golden Espresso Swirl Accents
           ctx.beginPath();
           ctx.arc(0, 0, maxScale * 0.85, 0, Math.PI * 2);
           ctx.fillStyle = '#C8935A';
           ctx.fill();
 
+          // MULTI-LAYER LATTE ART ROSETTA & HEART PATTERN
           const numLeaves = 6;
           for (let l = numLeaves; l >= 1; l--) {
             const leafScale = (l / numLeaves) * maxScale * 0.85;
@@ -648,6 +463,7 @@ export default function HeroCanvasAnimation() {
             ctx.save();
             ctx.translate(0, leafYOffset);
             
+            // Creamy White Foam Petal
             ctx.beginPath();
             ctx.moveTo(0, leafScale * 0.5);
             ctx.bezierCurveTo(
@@ -665,6 +481,7 @@ export default function HeroCanvasAnimation() {
             ctx.restore();
           }
 
+          // Top Heart Crown on Rosetta
           const heartSize = maxScale * 0.28;
           const heartY = -maxScale * 0.42;
           ctx.save();
@@ -684,6 +501,7 @@ export default function HeroCanvasAnimation() {
           ctx.fillStyle = '#FFFDF9';
           ctx.fill();
 
+          // Central Latte Art Drag Line (Barista etching pin detail)
           ctx.beginPath();
           ctx.moveTo(0, -maxScale * 0.55);
           ctx.lineTo(0, maxScale * 0.45);
@@ -693,10 +511,10 @@ export default function HeroCanvasAnimation() {
 
           ctx.restore();
 
-          ctx.restore();
+          ctx.restore(); // End transformed Latte Art
         }
 
-        // Concentric Ripple Effect
+        // Concentric Ripple Effect on Surface from Pour Stream
         if (rawProgress > 0.02 && rawProgress < 0.92) {
           const rippleRadius = (time * 1.8) % (liquidRadiusX * 0.7);
           const rippleAlpha = Math.max(0, 1 - (rippleRadius / (liquidRadiusX * 0.7))) * 0.4;
@@ -709,10 +527,10 @@ export default function HeroCanvasAnimation() {
           ctx.restore();
         }
 
-        ctx.restore();
+        ctx.restore(); // End top liquid surface ellipse
       }
 
-      ctx.restore();
+      ctx.restore(); // End inner cup clipping mask
 
       // --- DRAW CUP FRONT RIM HIGHLIGHT ---
       ctx.save();
@@ -724,15 +542,18 @@ export default function HeroCanvasAnimation() {
       ctx.restore();
 
       // --- 4. COFFEE & MILK POURING STREAMS ---
+      // Stream origin at nozzle above cup
       const streamSourceX = cupCenterX + Math.sin(time * 0.03) * 3;
       const streamSourceY = cupCenterY - cupHeight * 1.8;
       const streamHitY = liquidSurfaceY;
 
+      // Phase 1 (0.0 to 0.48): Espresso Stream
       if (rawProgress > 0.01 && rawProgress < 0.52) {
         const streamAlpha = rawProgress < 0.06 ? rawProgress / 0.06 : (rawProgress > 0.46 ? (0.52 - rawProgress) / 0.06 : 1.0);
         ctx.save();
         ctx.globalAlpha = streamAlpha;
 
+        // Outer Liquid Stream Glow
         ctx.beginPath();
         ctx.moveTo(streamSourceX - 6, streamSourceY);
         ctx.quadraticCurveTo(
@@ -753,6 +574,7 @@ export default function HeroCanvasAnimation() {
         ctx.fillStyle = espressoStreamGrad;
         ctx.fill();
 
+        // Inner Liquid Stream Highlight Core
         ctx.beginPath();
         ctx.moveTo(streamSourceX - 1.5, streamSourceY);
         ctx.lineTo(cupCenterX - 1, streamHitY);
@@ -763,6 +585,7 @@ export default function HeroCanvasAnimation() {
 
         ctx.restore();
 
+        // Spawn Espresso Splash Particles at hit point
         if (time % 2 === 0 && streamHitY <= cupCenterY + cupHeight * 0.45) {
           for (let p = 0; p < 2; p++) {
             splashParticles.push(new SplashParticle(cupCenterX, streamHitY, false));
@@ -770,11 +593,13 @@ export default function HeroCanvasAnimation() {
         }
       }
 
+      // Phase 2 (0.45 to 0.92): Milk Stream for Latte Art
       if (rawProgress >= 0.44 && rawProgress < 0.94) {
         const milkAlpha = rawProgress < 0.50 ? (rawProgress - 0.44) / 0.06 : (rawProgress > 0.88 ? (0.94 - rawProgress) / 0.06 : 1.0);
         ctx.save();
         ctx.globalAlpha = milkAlpha;
 
+        // Silky Milk Stream
         const milkSourceX = streamSourceX + 4;
         ctx.beginPath();
         ctx.moveTo(milkSourceX - 4.5, streamSourceY);
@@ -796,6 +621,7 @@ export default function HeroCanvasAnimation() {
         ctx.fillStyle = milkStreamGrad;
         ctx.fill();
 
+        // Inner Sheen
         ctx.beginPath();
         ctx.moveTo(milkSourceX - 1, streamSourceY);
         ctx.lineTo(cupCenterX - 0.5, streamHitY);
@@ -806,6 +632,7 @@ export default function HeroCanvasAnimation() {
 
         ctx.restore();
 
+        // Spawn Milk Splash Droplets
         if (time % 2 === 0 && streamHitY <= cupCenterY + cupHeight * 0.45) {
           for (let p = 0; p < 2; p++) {
             splashParticles.push(new SplashParticle(cupCenterX, streamHitY, true));
@@ -824,32 +651,25 @@ export default function HeroCanvasAnimation() {
         }
       }
 
-      // --- 5. NATURAL STEAM MOVEMENT WITH DYNAMIC DIRECTION ---
+      // --- 5. NATURAL STEAM MOVEMENT ---
+      // Emitter position rises from liquid surface level
       const steamEmitterX = cupCenterX;
       const steamEmitterY = fillLevel > 0.05 ? liquidSurfaceY - 5 : cupCenterY;
 
+      // Continuous Steam Emission
       const spawnInterval = Math.max(2, Math.round(5 - Math.abs(scrollVelVal) * 40));
       if (time % spawnInterval === 0 && steamParticles.length < 90) {
         steamParticles.push(new SteamParticle(steamEmitterX, steamEmitterY, scrollVelVal));
       }
 
-      // Update & Draw Natural Steam responding to mouse velocity & offset draft
+      // Update & Draw Natural Steam
       for (let i = steamParticles.length - 1; i >= 0; i--) {
         const p = steamParticles[i];
-        p.update(scrollVelVal, mouseVelX, currentMouseX);
+        p.update(scrollVelVal);
         if (p.life >= 1) {
           steamParticles.splice(i, 1);
         } else {
           p.draw(ctx);
-        }
-      }
-
-      ctx.restore(); // Restore cup layer rotation transform
-
-      // Update & Draw Foreground Coffee Beans (Depth z > 1.0)
-      for (const bean of coffeeBeans) {
-        if (bean.z > 1.0) {
-          bean.draw(ctx, shadowOffsetX, shadowOffsetY);
         }
       }
 
