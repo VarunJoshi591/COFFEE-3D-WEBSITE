@@ -8,6 +8,7 @@ import ProductShowcase from '@/components/ProductShowcase';
 import FeatureSection from '@/components/FeatureSection';
 import BrewingGuide from '@/components/BrewingGuide';
 import FinalCTA from '@/components/FinalCTA';
+import SoundToggle from '@/components/SoundToggle';
 import { motion, AnimatePresence } from 'framer-motion';
 
 function ThemeBadge() {
@@ -104,6 +105,9 @@ function HomeContent() {
 
       {/* Theme Badge Toast */}
       <ThemeBadge />
+
+      {/* Ambient Sound Toggle */}
+      <SoundToggle />
     </main>
   );
 }
