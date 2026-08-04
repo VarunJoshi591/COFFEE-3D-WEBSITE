@@ -9,6 +9,7 @@ import FeatureSection from '@/components/FeatureSection';
 import BrewingGuide from '@/components/BrewingGuide';
 import FinalCTA from '@/components/FinalCTA';
 import SoundToggle from '@/components/SoundToggle';
+import CoffeeLoader from '@/components/CoffeeLoader';
 import { motion, AnimatePresence } from 'framer-motion';
 
 function ThemeBadge() {
@@ -66,6 +67,7 @@ function ThemeBadge() {
 
 function HomeContent() {
   const [cartCount, setCartCount] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
   const { theme } = useTheme();
 
   useEffect(() => {
@@ -85,6 +87,9 @@ function HomeContent() {
 
   return (
     <main className={`${bgColor} min-h-screen transition-colors duration-1000`}>
+      {/* 4-Phase Coffee Preparation Loading Screen */}
+      {isLoading && <CoffeeLoader onComplete={() => setIsLoading(false)} />}
+
       {/* Navigation Header */}
       <Navbar cartCount={cartCount} />
 
