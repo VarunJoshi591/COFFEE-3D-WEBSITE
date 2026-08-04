@@ -10,12 +10,14 @@
   --coffee-text-secondary: #C9B8A0;
   --coffee-accent: #4F9C8F;
   --coffee-gold: #FFD700;
+  --coffee-espresso: #1A0F0A;
   --coffee-gradient: linear-gradient(135deg, #2D1810 0%, #1A0F0A 100%);
 }
 
 @layer base {
 body {
   @apply bg-[#1A0F0A] text-[#F5E6D3] font-inter antialiased;
+  transition: background-color 1s ease;
 }
 ::selection {
   @apply bg-[#4F9C8F] text-white;

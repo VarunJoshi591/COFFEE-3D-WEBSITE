@@ -3,6 +3,7 @@
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { motion, useScroll, useTransform, useSpring, useVelocity } from 'framer-motion';
 import { ChevronDown, RotateCcw, Play } from 'lucide-react';
+import { useTheme } from './ThemeProvider';
 
 // Particle classes for natural steam movement and pour splash effects
 
@@ -115,6 +116,7 @@ class SplashParticle {
 }
 
 export default function HeroCanvasAnimation() {
+  const { colors } = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [targetElement, setTargetElement] = useState<HTMLElement | null>(null);
@@ -239,9 +241,9 @@ export default function HeroCanvasAnimation() {
         canvas.height / 2,
         Math.max(canvas.width, canvas.height) * 0.75
       );
-      bgGrad.addColorStop(0, '#26160E');
-      bgGrad.addColorStop(0.5, '#160B07');
-      bgGrad.addColorStop(1, '#0A0402');
+      bgGrad.addColorStop(0, colors.canvasBg1);
+      bgGrad.addColorStop(0.5, colors.canvasBg2);
+      bgGrad.addColorStop(1, colors.canvasBg3);
       ctx.fillStyle = bgGrad;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.restore();
@@ -684,7 +686,7 @@ export default function HeroCanvasAnimation() {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('resize', resizeCanvas);
     };
-  }, [smoothProgress, scrollVelocity, pourProgressState, isPouring]);
+  }, [smoothProgress, scrollVelocity, pourProgressState, isPouring, colors]);
 
   // Section text opacity calculations (synced with scrolling progress)
   const section1Opacity = useTransform(smoothProgress, [0, 0.08, 0.18, 0.24], [1, 1, 1, 0]);
