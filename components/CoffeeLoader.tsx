@@ -68,9 +68,16 @@ export default function CoffeeLoader({ onComplete }: CoffeeLoaderProps) {
     }
     const steams: Steam[] = [];
 
+    // Lock body scroll while loader is active on mobile & desktop
+    const origOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
     const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      canvas.style.width = `${window.innerWidth}px`;
+      canvas.style.height = `${window.innerHeight}px`;
     };
     resize();
     window.addEventListener('resize', resize);
@@ -89,18 +96,26 @@ export default function CoffeeLoader({ onComplete }: CoffeeLoaderProps) {
 
       setPhase(currentPhase);
 
-      const cx = canvas.width / 2;
-      const cy = canvas.height / 2 - 20;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const cssW = canvas.width / dpr;
+      const cssH = canvas.height / dpr;
+      const isMobile = cssW < 640;
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.save();
+      ctx.scale(dpr, dpr);
+
+      const cx = cssW / 2;
+      const cy = cssH * (isMobile ? 0.43 : 0.48);
+
+      ctx.clearRect(0, 0, cssW, cssH);
 
       // Deep Dark Espresso Canvas Background
-      const bgGrad = ctx.createRadialGradient(cx, cy, 50, cx, cy, Math.max(canvas.width, canvas.height) * 0.7);
+      const bgGrad = ctx.createRadialGradient(cx, cy, 50, cx, cy, Math.max(cssW, cssH) * 0.75);
       bgGrad.addColorStop(0, '#2D1810');
       bgGrad.addColorStop(0.6, '#180E09');
       bgGrad.addColorStop(1, '#0C0604');
       ctx.fillStyle = bgGrad;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillRect(0, 0, cssW, cssH);
 
       // --- PHASE 1: BEANS FALLING INTO GRINDER ---
       if (pct <= 0.38) {
@@ -328,11 +343,14 @@ export default function CoffeeLoader({ onComplete }: CoffeeLoaderProps) {
         }
       }
 
+      ctx.restore();
+
       if (elapsed < DURATION) {
         animId = requestAnimationFrame(render);
       } else {
         setIsClosing(true);
         setTimeout(() => {
+          document.body.style.overflow = origOverflow;
           onComplete();
         }, 600);
       }
@@ -343,12 +361,16 @@ export default function CoffeeLoader({ onComplete }: CoffeeLoaderProps) {
     return () => {
       cancelAnimationFrame(animId);
       window.removeEventListener('resize', resize);
+      document.body.style.overflow = origOverflow;
     };
   }, [onComplete]);
 
   const handleSkip = () => {
     setIsClosing(true);
-    setTimeout(onComplete, 400);
+    setTimeout(() => {
+      document.body.style.overflow = '';
+      onComplete();
+    }, 400);
   };
 
   const getPhaseText = () => {
@@ -373,7 +395,7 @@ export default function CoffeeLoader({ onComplete }: CoffeeLoaderProps) {
           initial={{ opacity: 1 }}
           exit={{ opacity: 0, scale: 1.05 }}
           transition={{ duration: 0.6, ease: 'easeInOut' }}
-          className="fixed inset-0 z-[200] flex flex-col items-center justify-between select-none overflow-hidden bg-[#0C0604]"
+          className="fixed inset-0 z-[200] flex flex-col items-center justify-between select-none overflow-hidden bg-[#0C0604] touch-none min-h-[100dvh] w-screen"
         >
           {/* Canvas Background & Animation */}
           <canvas ref={canvasRef} className="absolute inset-0 w-full h-full block" />
