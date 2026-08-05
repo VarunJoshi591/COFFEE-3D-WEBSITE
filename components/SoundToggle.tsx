@@ -115,7 +115,7 @@ export default function SoundToggle() {
   }, []);
 
   return (
-    <div className="fixed bottom-6 left-6 z-[100]">
+    <div className="fixed bottom-4 left-4 sm:bottom-6 sm:left-6 z-[100]">
       {/* Expandable Mixer Panel */}
       <AnimatePresence>
         {isOpen && (
@@ -124,7 +124,7 @@ export default function SoundToggle() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 12, scale: 0.92 }}
             transition={{ duration: 0.3, ease: 'easeOut' }}
-            className="absolute bottom-16 left-0 w-72 rounded-2xl border shadow-2xl backdrop-blur-2xl p-5 space-y-4"
+            className="absolute bottom-14 sm:bottom-16 left-0 w-[calc(100vw-2rem)] max-w-[280px] sm:w-72 rounded-2xl border shadow-2xl backdrop-blur-2xl p-4 sm:p-5 space-y-3 sm:space-y-4"
             style={{
               backgroundColor: 'var(--coffee-bg-primary)',
               borderColor: 'var(--coffee-border)',
@@ -132,7 +132,7 @@ export default function SoundToggle() {
           >
             {/* Panel Header */}
             <div className="flex items-center justify-between mb-1">
-              <span className="text-xs font-bold tracking-[0.25em] uppercase font-inter" style={{ color: 'var(--coffee-accent)' }}>
+              <span className="text-[10px] sm:text-xs font-bold tracking-[0.2em] sm:tracking-[0.25em] uppercase font-inter" style={{ color: 'var(--coffee-accent)' }}>
                 Café Soundscape
               </span>
               <button
@@ -158,12 +158,12 @@ export default function SoundToggle() {
       </AnimatePresence>
 
       {/* Main Toggle Button */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1.5 sm:gap-2">
         <motion.button
           whileHover={{ scale: 1.08 }}
           whileTap={{ scale: 0.92 }}
           onClick={handleToggle}
-          className="w-12 h-12 rounded-full flex items-center justify-center shadow-xl border backdrop-blur-xl transition-all duration-300"
+          className="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shadow-xl border backdrop-blur-xl transition-all duration-300"
           style={{
             backgroundColor: isPlaying ? 'var(--coffee-accent)' : 'var(--coffee-bg-secondary)',
             borderColor: isPlaying ? 'var(--coffee-accent)' : 'var(--coffee-border)',
@@ -186,7 +186,7 @@ export default function SoundToggle() {
           whileHover={{ scale: 1.08 }}
           whileTap={{ scale: 0.92 }}
           onClick={() => setIsOpen(!isOpen)}
-          className="w-9 h-9 rounded-full flex items-center justify-center border backdrop-blur-xl transition-all duration-300"
+          className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center border backdrop-blur-xl transition-all duration-300"
           style={{
             backgroundColor: isOpen ? 'var(--coffee-accent)' : 'var(--coffee-bg-secondary)',
             borderColor: isOpen ? 'var(--coffee-accent)' : 'var(--coffee-border)',

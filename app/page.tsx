@@ -36,7 +36,7 @@ function ThemeBadge() {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 20, scale: 0.9 }}
           transition={{ duration: 0.5, ease: 'easeOut' }}
-          className="fixed bottom-6 right-6 z-[100] flex items-center gap-2.5 px-5 py-3 rounded-full shadow-2xl border backdrop-blur-xl cursor-pointer"
+          className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[90] flex items-center gap-2 sm:gap-2.5 px-3.5 py-2 sm:px-5 sm:py-3 rounded-full shadow-2xl border backdrop-blur-xl cursor-pointer"
           style={{
             backgroundColor: 'var(--coffee-bg-secondary)',
             borderColor: 'var(--coffee-border)',

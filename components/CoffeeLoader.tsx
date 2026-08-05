@@ -226,8 +226,8 @@ export default function CoffeeLoader({ onComplete }: CoffeeLoaderProps) {
         ctx.save();
         ctx.translate(cx, cy + 60);
 
-        const cupWidth = 110;
-        const cupHeight = 85;
+        const cupWidth = Math.min(110, Math.max(75, canvas.width * 0.25));
+        const cupHeight = cupWidth * 0.77;
         const fillLevel = Math.max(0, Math.min(1, (pct - 0.60) / 0.32));
 
         // Saucer
@@ -379,17 +379,17 @@ export default function CoffeeLoader({ onComplete }: CoffeeLoaderProps) {
           <canvas ref={canvasRef} className="absolute inset-0 w-full h-full block" />
 
           {/* Top Brand Logo Header */}
-          <div className="relative z-10 pt-10 text-center">
-            <span className="text-xs font-extrabold tracking-[0.3em] uppercase text-[var(--coffee-accent)] font-inter block mb-1">
+          <div className="relative z-10 pt-8 sm:pt-10 text-center px-4">
+            <span className="text-[10px] sm:text-xs font-extrabold tracking-[0.25em] sm:tracking-[0.3em] uppercase text-[var(--coffee-accent)] font-inter block mb-1">
               BREWHAUS · EST. 2014
             </span>
-            <h1 className="text-2xl sm:text-3xl font-playfair font-bold text-[#F5E6D3] tracking-wide">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-playfair font-bold text-[#F5E6D3] tracking-wide">
               Crafting Excellence
             </h1>
           </div>
 
           {/* Bottom Phase Text & Progress Bar */}
-          <div className="relative z-10 pb-12 px-6 w-full max-w-md flex flex-col items-center gap-4">
+          <div className="relative z-10 pb-8 sm:pb-12 px-4 sm:px-6 w-full max-w-md flex flex-col items-center gap-3 sm:gap-4">
             {/* Dynamic Phase Text */}
             <motion.div
               key={phase}
@@ -397,14 +397,14 @@ export default function CoffeeLoader({ onComplete }: CoffeeLoaderProps) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3 }}
-              className="flex items-center gap-2 text-sm md:text-base font-semibold font-inter text-[#F5E6D3]"
+              className="flex items-center gap-2 text-xs sm:text-sm md:text-base font-semibold font-inter text-[#F5E6D3]"
             >
               <Coffee className="w-4 h-4 text-[var(--coffee-accent)] animate-pulse" />
               <span>{getPhaseText()}</span>
             </motion.div>
 
             {/* Glowing Progress Bar */}
-            <div className="w-full h-2 rounded-full bg-[#2A1810] border border-[#5A4034]/40 overflow-hidden relative p-0.5">
+            <div className="w-full h-1.5 sm:h-2 rounded-full bg-[#2A1810] border border-[#5A4034]/40 overflow-hidden relative p-0.5">
               <motion.div
                 className="h-full rounded-full bg-gradient-to-r from-[var(--coffee-accent)] via-[#D4A574] to-[var(--coffee-gold)]"
                 style={{ width: `${Math.round(progress * 100)}%` }}
@@ -413,7 +413,7 @@ export default function CoffeeLoader({ onComplete }: CoffeeLoaderProps) {
             </div>
 
             {/* Stage Indicator Pills */}
-            <div className="flex items-center justify-between w-full text-[10px] font-bold tracking-wider uppercase font-inter text-[var(--coffee-text-secondary)] px-1">
+            <div className="flex items-center justify-between w-full text-[9px] sm:text-[10px] font-bold tracking-wider uppercase font-inter text-[var(--coffee-text-secondary)] px-1 gap-1">
               <span className={phase >= 1 ? 'text-[var(--coffee-accent)]' : ''}>1. Beans</span>
               <span>↓</span>
               <span className={phase >= 2 ? 'text-[var(--coffee-accent)]' : ''}>2. Grinding</span>

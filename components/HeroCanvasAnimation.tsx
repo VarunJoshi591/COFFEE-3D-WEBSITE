@@ -268,10 +268,11 @@ export default function HeroCanvasAnimation() {
 
       // CUP & POURING ENGINE CALCULATIONS
       const cupCenterX = canvas.width / 2 + mouseOffsetX;
-      const cupCenterY = canvas.height * 0.56 + mouseOffsetY + scrollOffsetY;
+      const isMobileScreen = canvas.width < 640;
+      const cupCenterY = canvas.height * (isMobileScreen ? 0.53 : 0.56) + mouseOffsetY + scrollOffsetY;
 
-      // Cup Geometry Dimensions
-      const cupRadiusX = Math.min(140, canvas.width * 0.18);
+      // Cup Geometry Dimensions (Dynamically scaled for mobile phones & tablets)
+      const cupRadiusX = Math.min(140, Math.max(82, canvas.width * (isMobileScreen ? 0.28 : 0.18)));
       const cupRadiusY = cupRadiusX * 0.28;
       const cupHeight = cupRadiusX * 1.25;
 
@@ -701,17 +702,17 @@ export default function HeroCanvasAnimation() {
         <canvas ref={canvasRef} className="absolute inset-0 w-full h-full block" />
 
         {/* Live Interactive Simulation Status Badge & Re-pour Button */}
-        <div className="absolute top-24 left-6 md:left-12 z-30 flex items-center gap-3 pointer-events-auto">
+        <div className="absolute top-20 sm:top-24 left-4 sm:left-6 md:left-12 z-30 flex items-center gap-2 sm:gap-3 pointer-events-auto flex-wrap sm:flex-nowrap">
           <button
             onClick={resetPourAnimation}
-            className="flex items-center gap-2 px-4 py-2 bg-[#1A0F0A]/70 hover:bg-[#1A0F0A]/90 backdrop-blur-md border border-[#D4A574]/40 rounded-full text-xs font-semibold text-[#F5E6D3] hover:text-white transition-all duration-300 shadow-xl group hover:border-[#4F9C8F]"
+            className="flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-[#1A0F0A]/70 hover:bg-[#1A0F0A]/90 backdrop-blur-md border border-[#D4A574]/40 rounded-full text-[11px] sm:text-xs font-semibold text-[#F5E6D3] hover:text-white transition-all duration-300 shadow-xl group hover:border-[#4F9C8F]"
             title="Re-pour Coffee & Re-create Latte Art"
           >
-            <RotateCcw className="w-3.5 h-3.5 text-[#4F9C8F] group-hover:rotate-180 transition-transform duration-500" />
+            <RotateCcw className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#4F9C8F] group-hover:rotate-180 transition-transform duration-500" />
             <span>Re-pour Coffee</span>
           </button>
           
-          <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-[#1A0F0A]/60 backdrop-blur-md border border-white/10 rounded-full text-[11px] font-medium text-[#C9B8A0]">
+          <div className="hidden xs:flex items-center gap-2 px-2.5 py-1 sm:px-3 sm:py-1.5 bg-[#1A0F0A]/60 backdrop-blur-md border border-white/10 rounded-full text-[10px] sm:text-[11px] font-medium text-[#C9B8A0]">
             <span className="w-2 h-2 rounded-full bg-[#4F9C8F] animate-pulse" />
             <span>
               {isPouring 
@@ -725,23 +726,23 @@ export default function HeroCanvasAnimation() {
         <div className="absolute inset-0 pointer-events-none">
           
           {/* Section 1 */}
-          <motion.div style={{ opacity: section1Opacity }} className="absolute inset-0 flex flex-col items-center justify-center px-4 pt-20 md:pt-24 text-center">
+          <motion.div style={{ opacity: section1Opacity }} className="absolute inset-0 flex flex-col items-center justify-center px-4 pt-16 sm:pt-20 md:pt-24 text-center">
             <div className="max-w-3xl flex flex-col items-center">
-              <span className="text-[#4F9C8F] font-extrabold tracking-[0.3em] uppercase text-xs md:text-sm block mb-4 font-inter">
+              <span className="text-[#4F9C8F] font-extrabold tracking-[0.25em] sm:tracking-[0.3em] uppercase text-[10px] sm:text-xs md:text-sm block mb-3 sm:mb-4 font-inter">
                 BREWHAUS · EST. 2014
               </span>
-              <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-playfair font-normal text-[#F5E6D3] tracking-tight leading-none flex flex-col items-center mb-6 drop-shadow-md">
+              <h1 className="text-4xl xs:text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-playfair font-normal text-[#F5E6D3] tracking-tight leading-none flex flex-col items-center mb-4 sm:mb-6 drop-shadow-md">
                 <span>Experience</span>
-                <span className="italic font-playfair font-normal text-[#4F9C8F] mt-1">Coffee</span>
+                <span className="italic font-playfair font-normal text-[#4F9C8F] mt-0.5 sm:mt-1">Coffee</span>
               </h1>
-              <p className="text-sm sm:text-base md:text-lg text-[#C9B8A0] font-inter max-w-xl mx-auto font-light leading-relaxed mb-8">
+              <p className="text-xs sm:text-base md:text-lg text-[#C9B8A0] font-inter max-w-xl mx-auto font-light leading-relaxed mb-6 sm:mb-8 px-2">
                 Where each bean tells a story and every sip is a quiet ritual.<br className="hidden sm:inline" />
                 {' '}Discover blends crafted by master baristas.
               </p>
-              <div className="pointer-events-auto flex flex-col items-center gap-3">
+              <div className="pointer-events-auto flex flex-col items-center gap-2 sm:gap-3">
                 <a
                   href="#blends"
-                  className="inline-block px-8 py-3.5 bg-[#4F9C8F] text-[#1A0F0A] rounded-full text-xs md:text-sm font-bold font-inter tracking-widest uppercase hover:bg-[#3D8B7F] hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg shadow-[#4F9C8F]/25"
+                  className="inline-block px-6 py-3 sm:px-8 sm:py-3.5 bg-[#4F9C8F] text-[#1A0F0A] rounded-full text-xs md:text-sm font-bold font-inter tracking-widest uppercase hover:bg-[#3D8B7F] hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg shadow-[#4F9C8F]/25"
                 >
                   Discover Blends
                 </a>
@@ -749,39 +750,39 @@ export default function HeroCanvasAnimation() {
                   href="#blends"
                   animate={{ y: [0, 6, 0] }}
                   transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
-                  className="text-[#4F9C8F] hover:text-[#3D8B7F] transition-colors mt-2"
+                  className="text-[#4F9C8F] hover:text-[#3D8B7F] transition-colors mt-1 sm:mt-2"
                 >
-                  <ChevronDown className="w-6 h-6" />
+                  <ChevronDown className="w-5 h-5 sm:w-6 sm:h-6" />
                 </motion.a>
               </div>
             </div>
           </motion.div>
   
           {/* Section 2 */}
-          <motion.div style={{ opacity: section2Opacity }} className="absolute inset-0 flex flex-col justify-center items-center lg:items-start px-6 sm:px-12 md:px-24 text-center lg:text-left">
+          <motion.div style={{ opacity: section2Opacity }} className="absolute inset-0 flex flex-col justify-center items-center lg:items-start px-4 sm:px-12 md:px-24 text-center lg:text-left">
             <div className="max-w-3xl lg:mr-auto lg:ml-0 mx-auto">
-              <span className="text-[#D4A574] font-bold tracking-[0.3em] uppercase text-xs md:text-sm block mb-3 font-inter">
+              <span className="text-[#D4A574] font-bold tracking-[0.25em] sm:tracking-[0.3em] uppercase text-[10px] sm:text-xs md:text-sm block mb-2 sm:mb-3 font-inter">
                 The Alchemy of Taste
               </span>
-              <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-playfair font-semibold text-amber-50/95 mb-4 tracking-tight leading-tight drop-shadow-[0_0_20px_rgba(253,251,235,0.25)]">
+              <h2 className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-playfair font-semibold text-amber-50/95 mb-3 sm:mb-4 tracking-tight leading-tight drop-shadow-[0_0_20px_rgba(253,251,235,0.25)]">
                 Crafted to Perfection
               </h2>
-              <p className="text-sm sm:text-base md:text-lg text-[#C9B8A0] font-inter max-w-md mx-auto lg:mx-0 font-light leading-relaxed">
+              <p className="text-xs sm:text-base md:text-lg text-[#C9B8A0] font-inter max-w-md mx-auto lg:mx-0 font-light leading-relaxed px-2 sm:px-0">
                 From hand-selected single-origin beans to precision micro-roasting, excellence floats in every warm drop.
               </p>
             </div>
           </motion.div>
   
           {/* Section 3 */}
-          <motion.div style={{ opacity: section3Opacity }} className="absolute inset-0 flex flex-col justify-center items-center lg:items-end px-6 sm:px-12 md:px-24 text-center lg:text-right">
+          <motion.div style={{ opacity: section3Opacity }} className="absolute inset-0 flex flex-col justify-center items-center lg:items-end px-4 sm:px-12 md:px-24 text-center lg:text-right">
             <div className="max-w-3xl lg:ml-auto lg:mr-0 mx-auto">
-              <span className="text-[#4F9C8F] font-bold tracking-[0.3em] uppercase text-xs md:text-sm block mb-3 font-inter">
+              <span className="text-[#4F9C8F] font-bold tracking-[0.25em] sm:tracking-[0.3em] uppercase text-[10px] sm:text-xs md:text-sm block mb-2 sm:mb-3 font-inter">
                 Procedural Sensation
               </span>
-              <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-playfair font-semibold text-amber-50/95 mb-4 tracking-tight leading-tight drop-shadow-[0_0_20px_rgba(253,251,235,0.25)]">
+              <h2 className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-playfair font-semibold text-amber-50/95 mb-3 sm:mb-4 tracking-tight leading-tight drop-shadow-[0_0_20px_rgba(253,251,235,0.25)]">
                 Anti-Gravity Flavor
               </h2>
-              <p className="text-sm sm:text-base md:text-lg text-[#C9B8A0] font-inter max-w-md mx-auto lg:mr-0 lg:ml-auto font-light leading-relaxed">
+              <p className="text-xs sm:text-base md:text-lg text-[#C9B8A0] font-inter max-w-md mx-auto lg:mr-0 lg:ml-auto font-light leading-relaxed px-2 sm:px-0">
                 Defying expectations and elevating taste beyond the physical limits of traditional brewing.
               </p>
             </div>
@@ -790,17 +791,17 @@ export default function HeroCanvasAnimation() {
           {/* Section 4 */}
           <motion.div style={{ opacity: section4Opacity }} className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center">
             <div className="max-w-3xl">
-              <span className="text-[#D4A574] font-bold tracking-[0.3em] uppercase text-xs md:text-sm block mb-4 font-inter">
+              <span className="text-[#D4A574] font-bold tracking-[0.25em] sm:tracking-[0.3em] uppercase text-[10px] sm:text-xs md:text-sm block mb-3 sm:mb-4 font-inter">
                 Ready to Brew
               </span>
-              <h2 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-playfair font-bold text-amber-50/95 mb-8 tracking-tighter drop-shadow-[0_0_25px_rgba(253,251,235,0.35)]">
+              <h2 className="text-3xl xs:text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-playfair font-bold text-amber-50/95 mb-6 sm:mb-8 tracking-tight sm:tracking-tighter drop-shadow-[0_0_25px_rgba(253,251,235,0.35)]">
                 Discover Your Blend
               </h2>
               <motion.a
                 href="#blends"
                 whileHover={{ scale: 1.05, boxShadow: '0 10px 30px rgba(79, 156, 143, 0.4)' }}
                 whileTap={{ scale: 0.95 }}
-                className="inline-block px-8 py-4 md:px-10 md:py-5 bg-gradient-to-r from-[#4F9C8F] to-[#3D8B7F] text-white rounded-full text-sm md:text-lg font-bold font-inter shadow-2xl pointer-events-auto tracking-widest uppercase"
+                className="inline-block px-6 py-3.5 sm:px-8 sm:py-4 md:px-10 md:py-5 bg-gradient-to-r from-[#4F9C8F] to-[#3D8B7F] text-white rounded-full text-xs sm:text-sm md:text-lg font-bold font-inter shadow-2xl pointer-events-auto tracking-widest uppercase"
               >
                 Explore Collection ↓
               </motion.a>

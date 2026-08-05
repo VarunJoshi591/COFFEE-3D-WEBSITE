@@ -67,13 +67,13 @@ export default function BrewingGuide() {
   const current = brewMethods.find((m) => m.id === activeTab) || brewMethods[0];
 
   return (
-    <section id="brewing" className="py-32 px-4 md:px-8 relative overflow-hidden bg-gradient-to-b from-[#1A0F0A] to-[#0D0705]">
+    <section id="brewing" className="py-20 md:py-32 px-4 sm:px-6 md:px-8 relative overflow-hidden bg-gradient-to-b from-[#1A0F0A] to-[#0D0705]">
       {/* Background Decorative Element */}
-      <div className="absolute top-1/4 right-0 w-80 h-80 bg-coffee-accent/5 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/4 left-0 w-80 h-80 bg-[#D4A574]/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/4 right-0 w-60 h-60 sm:w-80 sm:h-80 bg-coffee-accent/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-1/4 left-0 w-60 h-60 sm:w-80 sm:h-80 bg-[#D4A574]/5 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-6xl mx-auto relative z-10">
-        <div className="text-center mb-16">
+        <div className="text-center mb-10 sm:mb-16">
           <motion.span
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 0.6, y: 0 }}
@@ -86,7 +86,7 @@ export default function BrewingGuide() {
             initial={{ opacity: 0, y: 25 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-5xl md:text-7xl font-playfair font-bold text-coffee-text-primary"
+            className="text-3xl xs:text-4xl sm:text-5xl md:text-7xl font-playfair font-bold text-coffee-text-primary"
           >
             Brewing Guide
           </motion.h2>
@@ -94,21 +94,21 @@ export default function BrewingGuide() {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 0.7 }}
             viewport={{ once: true }}
-            className="text-sm md:text-base text-coffee-text-secondary mt-4 max-w-xl mx-auto font-inter"
+            className="text-xs sm:text-sm md:text-base text-coffee-text-secondary mt-3 sm:mt-4 max-w-xl mx-auto font-inter px-2"
           >
             Master the art of extraction with our recommended brewing parameters.
           </motion.p>
         </div>
 
         {/* Tab Selectors */}
-        <div className="flex justify-center gap-2 md:gap-4 mb-12 flex-wrap">
+        <div className="flex justify-start sm:justify-center gap-2 md:gap-4 mb-8 sm:mb-12 overflow-x-auto no-scrollbar px-1 pb-2 sm:flex-wrap">
           {brewMethods.map((method) => {
             const isActive = method.id === activeTab;
             return (
               <button
                 key={method.id}
                 onClick={() => setActiveTab(method.id)}
-                className="relative px-6 py-3 rounded-full text-xs md:text-sm font-semibold tracking-widest uppercase font-inter transition-all duration-300 overflow-hidden"
+                className="relative px-4 py-2.5 sm:px-6 sm:py-3 rounded-full text-[11px] sm:text-xs md:text-sm font-semibold tracking-widest uppercase font-inter transition-all duration-300 overflow-hidden whitespace-nowrap shrink-0"
               >
                 {/* Active Slider Background */}
                 {isActive && (
@@ -128,7 +128,7 @@ export default function BrewingGuide() {
         </div>
 
         {/* Details Card */}
-        <div className="bg-coffee-secondary/40 backdrop-blur-md border border-coffee-border/40 rounded-3xl p-6 md:p-12 shadow-2xl relative overflow-hidden">
+        <div className="bg-coffee-secondary/40 backdrop-blur-md border border-coffee-border/40 rounded-2xl sm:rounded-3xl p-5 sm:p-8 md:p-12 shadow-2xl relative overflow-hidden">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
@@ -136,51 +136,51 @@ export default function BrewingGuide() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.4 }}
-              className="grid grid-cols-1 lg:grid-cols-5 gap-12"
+              className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12"
             >
               {/* Metrics Column */}
               <div className="lg:col-span-2 space-y-6 flex flex-col justify-center">
-                <h3 className="text-3xl font-playfair font-bold text-coffee-text-primary mb-2 flex items-center gap-3">
-                  <Coffee className="w-7 h-7 text-[#D4A574]" /> {current.name} Parameters
+                <h3 className="text-xl sm:text-2xl md:text-3xl font-playfair font-bold text-coffee-text-primary mb-2 flex items-center gap-2 sm:gap-3">
+                  <Coffee className="w-5 h-5 sm:w-7 sm:h-7 text-[#D4A574]" /> {current.name} Parameters
                 </h3>
-                <p className="text-sm text-coffee-text-secondary leading-relaxed font-inter mb-6">
+                <p className="text-xs sm:text-sm text-coffee-text-secondary leading-relaxed font-inter mb-4 sm:mb-6">
                   Fine-tuned guidelines to extract the optimal sweetness, complexity, and clarity of our signature beans.
                 </p>
                 <div className="grid grid-cols-2 gap-4">
                   {/* Ratio */}
-                  <div className="bg-[#1A0F0A]/60 border border-coffee-border/20 p-4 rounded-2xl flex flex-col justify-between">
+                  <div className="bg-[#1A0F0A]/60 border border-coffee-border/20 p-3 sm:p-4 rounded-xl sm:rounded-2xl flex flex-col justify-between">
                     <div className="flex items-center gap-2 text-[#D4A574] mb-2">
                       <Scale className="w-4 h-4" />
                       <span className="text-[10px] tracking-wider uppercase font-bold font-inter">Ratio</span>
                     </div>
-                    <span className="text-sm font-semibold text-coffee-text-primary font-inter">{current.ratio}</span>
+                    <span className="text-xs sm:text-sm font-semibold text-coffee-text-primary font-inter">{current.ratio}</span>
                   </div>
 
                   {/* Grind */}
-                  <div className="bg-[#1A0F0A]/60 border border-coffee-border/20 p-4 rounded-2xl flex flex-col justify-between">
+                  <div className="bg-[#1A0F0A]/60 border border-coffee-border/20 p-3 sm:p-4 rounded-xl sm:rounded-2xl flex flex-col justify-between">
                     <div className="flex items-center gap-2 text-coffee-accent mb-2">
                       <Coffee className="w-4 h-4" />
                       <span className="text-[10px] tracking-wider uppercase font-bold font-inter">Grind Size</span>
                     </div>
-                    <span className="text-sm font-semibold text-coffee-text-primary font-inter">{current.grind}</span>
+                    <span className="text-xs sm:text-sm font-semibold text-coffee-text-primary font-inter">{current.grind}</span>
                   </div>
 
                   {/* Time */}
-                  <div className="bg-[#1A0F0A]/60 border border-coffee-border/20 p-4 rounded-2xl flex flex-col justify-between">
+                  <div className="bg-[#1A0F0A]/60 border border-coffee-border/20 p-3 sm:p-4 rounded-xl sm:rounded-2xl flex flex-col justify-between">
                     <div className="flex items-center gap-2 text-coffee-accent mb-2">
                       <Timer className="w-4 h-4" />
                       <span className="text-[10px] tracking-wider uppercase font-bold font-inter">Target Time</span>
                     </div>
-                    <span className="text-sm font-semibold text-coffee-text-primary font-inter">{current.time}</span>
+                    <span className="text-xs sm:text-sm font-semibold text-coffee-text-primary font-inter">{current.time}</span>
                   </div>
 
                   {/* Temp */}
-                  <div className="bg-[#1A0F0A]/60 border border-coffee-border/20 p-4 rounded-2xl flex flex-col justify-between">
+                  <div className="bg-[#1A0F0A]/60 border border-coffee-border/20 p-3 sm:p-4 rounded-xl sm:rounded-2xl flex flex-col justify-between">
                     <div className="flex items-center gap-2 text-[#D4A574] mb-2">
                       <Thermometer className="w-4 h-4" />
                       <span className="text-[10px] tracking-wider uppercase font-bold font-inter">Temperature</span>
                     </div>
-                    <span className="text-sm font-semibold text-coffee-text-primary font-inter">{current.temp}</span>
+                    <span className="text-xs sm:text-sm font-semibold text-coffee-text-primary font-inter">{current.temp}</span>
                   </div>
                 </div>
               </div>
@@ -197,12 +197,12 @@ export default function BrewingGuide() {
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: idx * 0.1 }}
-                      className="flex gap-4 items-start p-4 rounded-2xl bg-coffee-secondary/20 hover:bg-coffee-secondary/40 border border-coffee-border/10 transition-colors"
+                      className="flex gap-3 sm:gap-4 items-start p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-coffee-secondary/20 hover:bg-coffee-secondary/40 border border-coffee-border/10 transition-colors"
                     >
-                      <div className="w-7 h-7 rounded-full bg-coffee-accent/25 border border-coffee-accent/40 flex items-center justify-center text-xs font-bold text-[#F5E6D3] shrink-0 font-inter">
+                      <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-coffee-accent/25 border border-coffee-accent/40 flex items-center justify-center text-[10px] sm:text-xs font-bold text-[#F5E6D3] shrink-0 font-inter">
                         {idx + 1}
                       </div>
-                      <p className="text-sm md:text-base text-coffee-text-primary/90 leading-relaxed font-inter pt-0.5">
+                      <p className="text-xs sm:text-sm md:text-base text-coffee-text-primary/90 leading-relaxed font-inter pt-0.5">
                         {step}
                       </p>
                     </motion.div>
