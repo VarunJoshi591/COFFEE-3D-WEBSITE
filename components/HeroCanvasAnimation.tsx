@@ -690,14 +690,14 @@ export default function HeroCanvasAnimation() {
   }, [smoothProgress, scrollVelocity, pourProgressState, isPouring, colors]);
 
   // Section text opacity calculations (synced with scrolling progress)
-  const section1Opacity = useTransform(smoothProgress, [0, 0.06, 0.18, 0.22], [1, 1, 1, 0]);
-  const section2Opacity = useTransform(smoothProgress, [0.24, 0.28, 0.44, 0.48], [0, 1, 1, 0]);
-  const section3Opacity = useTransform(smoothProgress, [0.50, 0.54, 0.70, 0.74], [0, 1, 1, 0]);
-  const section4Opacity = useTransform(smoothProgress, [0.76, 0.80, 0.94, 1.0], [0, 1, 1, 0]);
-  const scrollIndicatorOpacity = useTransform(smoothProgress, [0, 0.06], [1, 0]);
+  const section1Opacity = useTransform(smoothProgress, [0, 0.18, 0.25], [1, 1, 0]);
+  const section2Opacity = useTransform(smoothProgress, [0.20, 0.25, 0.45, 0.50], [0, 1, 1, 0]);
+  const section3Opacity = useTransform(smoothProgress, [0.45, 0.50, 0.70, 0.75], [0, 1, 1, 0]);
+  const section4Opacity = useTransform(smoothProgress, [0.70, 0.75, 1.0], [0, 1, 1]);
+  const scrollIndicatorOpacity = useTransform(smoothProgress, [0, 0.08], [1, 0]);
 
   return (
-    <div id="hero" ref={containerRef} className="relative h-[250vh]">
+    <div id="hero" ref={containerRef} className="relative h-[200vh]">
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         <canvas ref={canvasRef} className="absolute inset-0 w-full h-full block" />
 
