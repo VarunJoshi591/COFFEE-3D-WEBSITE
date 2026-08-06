@@ -9,7 +9,7 @@ interface ProductShowcaseProps {
 
 export default function ProductShowcase({ onAddToCart }: ProductShowcaseProps) {
   return (
-    <section id="blends" className="py-16 md:py-24 px-4 sm:px-6 md:px-8 relative">
+    <section id="blends" className="py-8 md:py-12 px-4 sm:px-6 md:px-8 relative">
       {/* Product Grid */}
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12 sm:mb-16">
