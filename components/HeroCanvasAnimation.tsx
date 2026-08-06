@@ -690,15 +690,12 @@ export default function HeroCanvasAnimation() {
   }, [smoothProgress, scrollVelocity, pourProgressState, isPouring, colors]);
 
   // Section text opacity calculations (synced with scrolling progress)
-  const section1Opacity = useTransform(smoothProgress, [0, 0.18, 0.25], [1, 1, 0]);
-  const section2Opacity = useTransform(smoothProgress, [0.20, 0.25, 0.45, 0.50], [0, 1, 1, 0]);
-  const section3Opacity = useTransform(smoothProgress, [0.45, 0.50, 0.70, 0.75], [0, 1, 1, 0]);
-  const section4Opacity = useTransform(smoothProgress, [0.70, 0.75, 1.0], [0, 1, 1]);
-  const scrollIndicatorOpacity = useTransform(smoothProgress, [0, 0.08], [1, 0]);
+  const section1Opacity = useTransform(smoothProgress, [0, 0.4], [1, 0]);
+  const scrollIndicatorOpacity = useTransform(smoothProgress, [0, 0.2], [1, 0]);
 
   return (
-    <div id="hero" ref={containerRef} className="relative h-[200vh]">
-      <div className="sticky top-0 h-screen w-full overflow-hidden">
+    <div id="hero" ref={containerRef} className="relative h-screen w-full overflow-hidden">
+      <div className="relative h-full w-full">
         <canvas ref={canvasRef} className="absolute inset-0 w-full h-full block" />
 
         {/* Live Interactive Simulation Status Badge & Re-pour Button */}
@@ -755,56 +752,6 @@ export default function HeroCanvasAnimation() {
                   <ChevronDown className="w-5 h-5 sm:w-6 sm:h-6" />
                 </motion.a>
               </div>
-            </div>
-          </motion.div>
-  
-          {/* Section 2 */}
-          <motion.div style={{ opacity: section2Opacity }} className="absolute inset-0 flex flex-col justify-center items-center lg:items-start px-4 sm:px-12 md:px-24 text-center lg:text-left">
-            <div className="max-w-3xl lg:mr-auto lg:ml-0 mx-auto">
-              <span className="text-[#D4A574] font-bold tracking-[0.25em] sm:tracking-[0.3em] uppercase text-[10px] sm:text-xs md:text-sm block mb-2 sm:mb-3 font-inter">
-                The Alchemy of Taste
-              </span>
-              <h2 className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-playfair font-semibold text-amber-50/95 mb-3 sm:mb-4 tracking-tight leading-tight drop-shadow-[0_0_20px_rgba(253,251,235,0.25)]">
-                Crafted to Perfection
-              </h2>
-              <p className="text-xs sm:text-base md:text-lg text-[#C9B8A0] font-inter max-w-md mx-auto lg:mx-0 font-light leading-relaxed px-2 sm:px-0">
-                From hand-selected single-origin beans to precision micro-roasting, excellence floats in every warm drop.
-              </p>
-            </div>
-          </motion.div>
-  
-          {/* Section 3 */}
-          <motion.div style={{ opacity: section3Opacity }} className="absolute inset-0 flex flex-col justify-center items-center lg:items-end px-4 sm:px-12 md:px-24 text-center lg:text-right">
-            <div className="max-w-3xl lg:ml-auto lg:mr-0 mx-auto">
-              <span className="text-[#4F9C8F] font-bold tracking-[0.25em] sm:tracking-[0.3em] uppercase text-[10px] sm:text-xs md:text-sm block mb-2 sm:mb-3 font-inter">
-                Procedural Sensation
-              </span>
-              <h2 className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-playfair font-semibold text-amber-50/95 mb-3 sm:mb-4 tracking-tight leading-tight drop-shadow-[0_0_20px_rgba(253,251,235,0.25)]">
-                Anti-Gravity Flavor
-              </h2>
-              <p className="text-xs sm:text-base md:text-lg text-[#C9B8A0] font-inter max-w-md mx-auto lg:mr-0 lg:ml-auto font-light leading-relaxed px-2 sm:px-0">
-                Defying expectations and elevating taste beyond the physical limits of traditional brewing.
-              </p>
-            </div>
-          </motion.div>
-  
-          {/* Section 4 */}
-          <motion.div style={{ opacity: section4Opacity }} className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center">
-            <div className="max-w-3xl">
-              <span className="text-[#D4A574] font-bold tracking-[0.25em] sm:tracking-[0.3em] uppercase text-[10px] sm:text-xs md:text-sm block mb-3 sm:mb-4 font-inter">
-                Ready to Brew
-              </span>
-              <h2 className="text-3xl xs:text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-playfair font-bold text-amber-50/95 mb-6 sm:mb-8 tracking-tight sm:tracking-tighter drop-shadow-[0_0_25px_rgba(253,251,235,0.35)]">
-                Discover Your Blend
-              </h2>
-              <motion.a
-                href="#blends"
-                whileHover={{ scale: 1.05, boxShadow: '0 10px 30px rgba(79, 156, 143, 0.4)' }}
-                whileTap={{ scale: 0.95 }}
-                className="inline-block px-6 py-3.5 sm:px-8 sm:py-4 md:px-10 md:py-5 bg-gradient-to-r from-[#4F9C8F] to-[#3D8B7F] text-white rounded-full text-xs sm:text-sm md:text-lg font-bold font-inter shadow-2xl pointer-events-auto tracking-widest uppercase"
-              >
-                Explore Collection ↓
-              </motion.a>
             </div>
           </motion.div>
         </div>
