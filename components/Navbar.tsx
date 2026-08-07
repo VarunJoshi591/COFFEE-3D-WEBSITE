@@ -29,10 +29,6 @@ export default function Navbar({ cartCount = 0 }: NavbarProps) {
         <a href="#hero" className="hover:text-coffee-accent transition-colors duration-300">
           Experience
         </a>
-        <a href="#steam-ai-lab" className="text-amber-400 hover:text-amber-300 transition-colors duration-300 flex items-center gap-1.5 font-bold">
-          <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
-          Steam AI
-        </a>
         <a href="#blends" className="hover:text-coffee-accent transition-colors duration-300">
           The Blends
         </a>
@@ -100,14 +96,6 @@ export default function Navbar({ cartCount = 0 }: NavbarProps) {
               className="w-full text-center py-2.5 text-base font-semibold tracking-wider text-coffee-text-secondary hover:text-coffee-accent transition-colors font-inter"
             >
               Experience
-            </a>
-            <a
-              href="#steam-ai-lab"
-              onClick={() => setIsOpen(false)}
-              className="w-full text-center py-2.5 text-base font-extrabold tracking-wider text-amber-400 hover:text-amber-300 transition-colors font-inter flex items-center justify-center gap-2"
-            >
-              <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
-              Steam AI Effect
             </a>
             <a
               href="#blends"

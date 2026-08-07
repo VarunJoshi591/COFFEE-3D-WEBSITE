@@ -10,7 +10,6 @@ import BrewingGuide from '@/components/BrewingGuide';
 import FinalCTA from '@/components/FinalCTA';
 import SoundToggle from '@/components/SoundToggle';
 import CoffeeLoader from '@/components/CoffeeLoader';
-import SteamAIEffect from '@/components/SteamAIEffect';
 import { motion, AnimatePresence } from 'framer-motion';
 
 function ThemeBadge() {
@@ -96,11 +95,6 @@ function HomeContent() {
 
       {/* Hero: Scroll-Triggered Canvas Animation */}
       <HeroCanvasAnimation />
-
-      {/* Steam AI Particle Morphing Interactive Showcase */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <SteamAIEffect />
-      </div>
 
       {/* Product Showcase Section */}
       <ProductShowcase onAddToCart={handleAddToCart} />
