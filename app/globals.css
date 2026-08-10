@@ -52,9 +52,6 @@ body {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-  .journey-glow {
-    box-shadow: 0 0 50px -10px var(--coffee-accent);
-  }
 }
 
 

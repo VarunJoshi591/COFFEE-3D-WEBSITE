@@ -3,7 +3,11 @@
 import { useState, useEffect } from 'react';
 import ThemeProvider, { useTheme } from '@/components/ThemeProvider';
 import Navbar from '@/components/Navbar';
-import ScrollJourney from '@/components/ScrollJourney';
+import HeroCanvasAnimation from '@/components/HeroCanvasAnimation';
+import ProductShowcase from '@/components/ProductShowcase';
+import FeatureSection from '@/components/FeatureSection';
+import BrewingGuide from '@/components/BrewingGuide';
+import FinalCTA from '@/components/FinalCTA';
 import SoundToggle from '@/components/SoundToggle';
 import CoffeeLoader from '@/components/CoffeeLoader';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -89,8 +93,20 @@ function HomeContent() {
       {/* Navigation Header */}
       <Navbar cartCount={cartCount} />
 
-      {/* Unified 7-Act Scroll Journey Experience */}
-      <ScrollJourney onAddToCart={handleAddToCart} />
+      {/* Hero Section */}
+      <HeroCanvasAnimation />
+
+      {/* Product Showcase Section */}
+      <ProductShowcase onAddToCart={handleAddToCart} />
+
+      {/* Feature Highlights Section */}
+      <FeatureSection />
+
+      {/* Interactive Brewing Guide */}
+      <BrewingGuide />
+
+      {/* Final Call-to-Action */}
+      <FinalCTA />
 
       {/* Theme Badge Toast */}
       <ThemeBadge />
