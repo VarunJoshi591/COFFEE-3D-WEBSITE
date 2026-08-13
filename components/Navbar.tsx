@@ -38,6 +38,9 @@ export default function Navbar({ cartCount = 0 }: NavbarProps) {
         <a href="#sourcing" className="hover:text-coffee-accent transition-colors duration-300">
           Sourcing
         </a>
+        <a href="/dashboard" className="text-amber-400 hover:text-amber-300 font-bold transition-colors duration-300 flex items-center gap-1">
+          SaaS Portal
+        </a>
       </nav>
 
       {/* CTA, Shopping Cart & Mobile Toggle */}

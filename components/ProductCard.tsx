@@ -42,18 +42,41 @@ export default function ProductCard({ product, index, onAdd }: ProductCardProps)
         {product.description}
       </p>
  
-      {/* Price & Add Button */}
+      {/* Price & Subscribe / Add Button */}
       <div className="flex items-center justify-between">
-        <span className="text-2xl sm:text-3xl font-bold text-coffee-accent font-inter">
-          {product.price}
-        </span>
+        <div className="flex flex-col">
+          <span className="text-xl sm:text-2xl font-bold text-coffee-accent font-inter">
+            {product.price}
+          </span>
+          <span className="text-[10px] text-amber-300/60 font-medium">Monthly Delivery</span>
+        </div>
         <motion.button
-          onClick={onAdd}
-          whileHover={{ scale: 1.1, rotate: 90 }}
-          whileTap={{ scale: 0.9 }}
-          className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-coffee-accent to-[#3D8B7F] flex items-center justify-center hover:shadow-lg hover:shadow-coffee-accent/40 transition-shadow text-white active:scale-95"
+          onClick={async () => {
+            if (onAdd) onAdd();
+            try {
+              const res = await fetch('/api/checkout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  productId: product.id,
+                  isSubscription: true,
+                  roastPreference: product.name,
+                }),
+              });
+              const data = await res.json();
+              if (data.url) {
+                window.location.href = data.url;
+              }
+            } catch (err) {
+              console.error('Checkout redirect error:', err);
+            }
+          }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="px-4 py-2 rounded-xl bg-gradient-to-r from-coffee-accent to-amber-600 text-amber-950 font-bold text-xs flex items-center gap-1.5 shadow-md shadow-coffee-accent/20 hover:shadow-lg hover:shadow-coffee-accent/40 transition-shadow active:scale-95"
         >
-          <Plus className="w-5 h-5" strokeWidth={3} />
+          <span>Subscribe</span>
+          <Plus className="w-3.5 h-3.5" strokeWidth={3} />
         </motion.button>
       </div>
     </motion.div>
