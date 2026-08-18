@@ -38,6 +38,9 @@ export default function Navbar({ cartCount = 0 }: NavbarProps) {
         <a href="#sourcing" className="hover:text-coffee-accent transition-colors duration-300">
           Sourcing
         </a>
+        <a href="#privacy-policy" className="hover:text-coffee-accent transition-colors duration-300">
+          Privacy
+        </a>
       </nav>
 
       {/* CTA, Shopping Cart & Mobile Toggle */}
@@ -117,6 +120,13 @@ export default function Navbar({ cartCount = 0 }: NavbarProps) {
               className="w-full text-center py-2.5 text-base font-semibold tracking-wider text-coffee-text-secondary hover:text-coffee-accent transition-colors font-inter"
             >
               Sourcing
+            </a>
+            <a
+              href="#privacy-policy"
+              onClick={() => setIsOpen(false)}
+              className="w-full text-center py-2.5 text-base font-semibold tracking-wider text-coffee-text-secondary hover:text-coffee-accent transition-colors font-inter"
+            >
+              Privacy & Policy
             </a>
             <a
               href="#blends"

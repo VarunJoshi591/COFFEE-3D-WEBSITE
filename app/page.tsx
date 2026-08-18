@@ -8,6 +8,7 @@ import ProductShowcase from '@/components/ProductShowcase';
 import FeatureSection from '@/components/FeatureSection';
 import BrewingGuide from '@/components/BrewingGuide';
 import FinalCTA from '@/components/FinalCTA';
+import Footer from '@/components/Footer';
 import SoundToggle from '@/components/SoundToggle';
 import CoffeeLoader from '@/components/CoffeeLoader';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -107,6 +108,9 @@ function HomeContent() {
 
       {/* Final Call-to-Action */}
       <FinalCTA />
+
+      {/* Footer & Privacy Policy Section */}
+      <Footer />
 
       {/* Theme Badge Toast */}
       <ThemeBadge />
